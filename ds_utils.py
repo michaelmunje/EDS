@@ -6,9 +6,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 import pandas as pd
+import numpy as np
 
 
-def print_nan_col_proportions(df: pd.DataFrame, lowest_proportion: float) -> None:
+def get_nan_col_proportions(df: pd.DataFrame, lowest_proportion: float = 0.0) -> [(str, float)]:
     """
     Prints out all columns with NaN values that exceed a specific proportion (default 0.0)
     :param df: pandas DataFrame to look into.
@@ -20,12 +21,27 @@ def print_nan_col_proportions(df: pd.DataFrame, lowest_proportion: float) -> Non
     contains_nan = [y for x, y in filtered]
     proportion_nan = [sum(df[x].isnull()) / len(df[x]) for x, y in contains_nan]
     proportion_nan = [(x[0], proportion_nan[i]) for i, x in enumerate(contains_nan)]
+    nan_prop_list = list()
     for col, propo_nan in proportion_nan:
-        if abs(propo_nan) > lowest_proportion or moderate_only is False:
-            print(col, ': ', propo_nan)
+        if abs(propo_nan) > lowest_proportion:
+            nan_prop_list.append((col, propo_nan))
+    return nan_prop_list
 
 
-def print_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderate_value: float) -> None:
+def remove_nan_cols(df: pd.DataFrame, prop_threshold: float = 0.0) -> pd.DataFrame:
+    """
+    Prints out all columns with NaN values that exceed a specific proportion (default 0.0)
+    :param df: pandas DataFrame to look into.
+    :param prop_threshold: float that is the lowest proportion that we delete
+    :return: None
+    """
+    nan_props = get_nan_col_proportions(df, prop_threshold)
+    names = [name for name, _ in nan_props]
+    df.drop(columns=names, inplace=True)
+    return df
+
+
+def print_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderate_value: float = 0.4) -> None:
     """
     Prints out all correlations deemed as moderate (0.4, or set by parameter).
     :param df: pandas DataFrame to look into.
@@ -42,13 +58,21 @@ def print_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderat
             print(col, ': ', corr)
 
 
-def get_moderate_corrs(df: pd.DataFrame, col_to_correlate: str) -> pd.DataFrame:
+def remove_weak_correlations(df: pd.DataFrame, col_to_correlate: str, weak_threshold: float = 0.05) -> pd.DataFrame:
+    """
+    Removes weak correlation
+    :param df: pandas DataFrame to remove columns from.
+    :param col_to_correlate: String column name to check correlation with
+    :param weak_threshold: float number that counts as an absolute weak threshold
+    :return: pandas DataFrame without the columns weakly correlated to target
+    """
     cols = df[df.columns].corr().columns
     corrs = df[df.columns].corr()[col_to_correlate]
+    weakly_correlated = list()
     for col, corr in zip(cols, corrs):
-        if abs(corr) < 0.05 and col != col_to_correlate:
-            df = df.drop(columns=[col])
-    return df
+        if abs(corr) < weak_threshold and col != col_to_correlate:
+            weakly_correlated.append(col)
+    return df.drop(columns=weakly_correlated)
 
 
 def convert_categorical_to_numbers(to_change_df: pd.DataFrame, numbers: bool = True) -> pd.DataFrame:
@@ -93,7 +117,12 @@ def replace_missing_with_ml(df: pd.DataFrame, predict_missing_df: pd.DataFrame,
     return df, predict_missing_df
 
 
+def remove_constant_columns(df: pd.DataFrame) -> pd.DataFrame:
+    return df.loc[:, df.apply(pd.Series.nunique) != 1]
+
+
 def adjust_skewness(df: pd.DataFrame) -> pd.DataFrame:
+
     numerics = list()
 
     for col, dtype in zip(df.columns, df.dtypes):
@@ -107,7 +136,8 @@ def adjust_skewness(df: pd.DataFrame) -> pd.DataFrame:
     skewed_features = skewness.index
     lam = 0.15
     for feat in skewed_features:
-        df[feat] = boxcox1p(df[feat], lam)
+        boxcot_trans = boxcox1p(df[feat], lam)
+        if not boxcot_trans.isnull().any():
+            df[feat] = boxcox1p(df[feat], lam)
 
     return df
-
