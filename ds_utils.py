@@ -1,12 +1,74 @@
+"""
+Author: Michael Munje
+Github: https://github.com/michaelmunje/ds_utils
+"""
+
 from scipy.stats import skew
 from scipy.special import boxcox1p
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
+from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
+
+
+def apply_scale(x_train: np.array, x_test: np.array, scale_type: str = 'Standard') -> (np.array, np.array):
+    """
+    Scales the data according to the distribution of x_train
+    :param x_train: numpy.array to scale via its distribution
+    :param x_test: numpy.array to scale according to x_test's distribution
+    :param scale_type: Which scaling type to use. Options: 'Standard', 'Robust', 'MinMax'. Default = 'Standard'
+    :return: x_train and x_test properly scaled.
+    """
+
+    if scale_type == 'Standard':
+        scaler = StandardScaler()
+    elif scale_type == 'Robust':
+        scaler = RobustScaler()
+    elif scale_type == 'MinMax':
+        scaler = RobustScaler()
+    else:
+        print("Invalid input. Defaulting to StandardScaler")
+        scaler = StandardScaler()
+
+    scaler.fit(x_train)
+    return scaler.transform(x_train), scaler.transform(x_test)
+
+
+def apply_pca(x_train: np.array, x_test: np.array, n_comps: float) -> (np.array, np.array):
+    """
+    Apply PCA to the data according to the distribution of x_train
+    :param x_train: numpy.array to scale via its distribution
+    :param x_test: numpy.array to scale according to x_test's distribution
+    :param n_comps: Either the number of principal components, or the variance to be kept in the components.
+    :return: x_train and x_test with PCA applied.
+    """
+
+    pca = PCA(n_components=n_comps)
+    pca.fit(x_train)
+    return pca.transform(x_train), pca.transform(x_test)
+
+
+def plot_hist_distribution(df: pd.Series, col: str) -> None:
+    """
+    Plots a histogram of the column's distribution
+    :param df: pandas DataFrame to extract column from
+    :param col: string that represents column
+    """
+
+    df[col].hist(bins=50, facecolor='green', alpha=0.5)
+    plt.title('Distribution of ' + col)
+    plt.xlabel(col)
+    plt.ylabel('Freq.')
+    fig = plt.gcf()
+    fig.set_size_inches(5, 5)
+    plt.show()
 
 
 def get_nan_col_proportions(df: pd.DataFrame, lowest_proportion: float = 0.0) -> [(str, float)]:
@@ -36,6 +98,7 @@ def remove_nan_cols(df: pd.DataFrame, prop_threshold: float = 0.0) -> pd.DataFra
     :param prop_threshold: float that is the lowest proportion that we delete
     :return: None
     """
+
     nan_props = get_nan_col_proportions(df, prop_threshold)
     names = [name for name, _ in nan_props]
     df.drop(columns=names, inplace=True)
