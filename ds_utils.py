@@ -6,6 +6,7 @@ Github: https://github.com/michaelmunje/ds_utils
 from scipy.stats import skew
 from scipy.special import boxcox1p
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import RobustScaler
@@ -13,6 +14,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
+from sklearn.metrics import accuracy_score
+from sklearn.utils import shuffle
 from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
@@ -207,14 +210,15 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> pd.DataFra
     print("Successfully trained model to predict: " + col_to_predict)
     print("------Evaluation-------")
 
-    if not is_classify:
+    if is_classify:
+        acc = accuracy_score(y_test, rf.predict(x_test))
+        print('ACC         : ', round(acc, 4))
+    else:
         r2 = r2_score(y_test, rf.predict(x_test))
         mse = mean_squared_error(y_test, rf.predict(x_test))
         rmse = mse ** (1 / 2)
         print('R2          : ', round(r2, 4))
         print('RMSE        : ', round(rmse, 2))
-    else:
-        print('ACC         : ', round(rf.score(x_test, y_test), 4))
 
     df.loc[df[col_to_predict].isnull(), col_to_predict] = rf.predict(df_to_predict.values)
     return df
@@ -251,3 +255,68 @@ def adjust_skewness(df: pd.DataFrame) -> pd.DataFrame:
             df[feat] = boxcox1p(df[feat], lam)
 
     return df
+
+
+def evaluate_regressor(y_actual: np.array, y_pred: np.array, metric_func: function = None) -> [float]:
+    """
+    Evaluates the prediction results of a regressor.
+    :param y_actual: numpy array of actual values
+    :param y_pred: numpy array of predicted values
+    :param metric_func: custom function to evaluate. Default = None
+    :return: Returns the evaluation metrics for the regressor.
+    """
+
+    r2 = r2_score(y_actual, y_pred)
+    mse = mean_squared_error(y_actual, y_pred)
+    rmse = mse ** (1 / 2)
+    metrics = [r2, mse, rmse]
+
+    print('R2          : ', round(r2, 4))
+    print('MSE        : ', round(mse, 4))
+    print('RMSE        : ', round(rmse, 4))
+
+    if metric_func:
+        custom_metric = metric_func(y_actual, y_pred)
+        metrics.append(custom_metric)
+        print('CUSTOM METRIC: ', round(houses_metric, 4))
+
+    return metrics
+
+
+def cross_validate(model, x, y, metric, folds=5, repeats=3):
+    """
+    Function to do the cross validation - using stacked Out of Bag method instead of averaging across folds.
+    :param model: scikit-learn like model to perform cross validation on
+    :param x: numpy array of features
+    :param y: numpy array of predictors
+    :param metric: what metric to use to evaluate the models
+    :param folds: number of folds. Default = 10.
+    :param repeats: number of times to repeat the whole process (different random splitting). Default = 5.
+    :return: the average metric score across all folds and repeats
+    """
+
+    y_pred = np.zeros(len(y))
+    score = np.zeros(repeats)
+
+    for r in range(repeats):
+
+        print('Running k-fold cross-validation ', r + 1, '/', repeats)
+
+        x, y = shuffle(x, y, random_state=r)
+
+        for i, (train_ind, test_ind) in enumerate(KFold(n_splits=folds, random_state=r + 10).split(x)):
+
+            print('Computing fold ', i + 1, '/', folds)
+
+            x_train, y_train = x[train_ind, :], y[train_ind]
+            x_test, y_test = x[test_ind, :], y[test_ind]
+
+            model.fit(x_train, y_train)
+
+            y_pred[test_ind] = model.predict(x_test)
+
+        score[r] = metric(y_pred, y)
+
+    print('\nOverall ', metric.__name__, ': ', score)
+    print('Average:', np.mean(score))
+    print('Std. Dev:', np.std(score))
