@@ -78,12 +78,26 @@ def plot_hist_distribution(df: pd.Series, col: str) -> None:
     :param col: string that represents column
     """
 
-    df[col].hist(bins=50, facecolor='green', alpha=0.5)
+    df[col].hist(bins=50, facecolor='red', alpha=0.5)
     plt.title('Distribution of ' + col)
     plt.xlabel(col)
     plt.ylabel('Freq.')
     fig = plt.gcf()
     fig.set_size_inches(5, 5)
+    plt.show()
+
+
+def plot_relationship(df: pd.DataFrame, feature1: str, feature2: str) -> None:
+
+    plt.scatter(df[feature1], df[feature2],
+                s=50, color='blue', label='Normal')
+    plt.grid()
+    plt.title('Pairwise Feature Relationship', fontsize=15)
+    plt.xlabel(feature1, fontsize=20)
+    plt.ylabel(feature2, fontsize=20)
+    plt.legend()
+    fig = plt.gcf()
+    fig.set_size_inches(8, 8)
     plt.show()
 
 
@@ -112,7 +126,7 @@ def remove_nan_cols(df: pd.DataFrame, prop_threshold: float = 0.0) -> pd.DataFra
     Prints out all columns with NaN values that exceed a specific proportion (default 0.0)
     :param df: pandas DataFrame to look into.
     :param prop_threshold: float that is the lowest proportion that we delete
-    :return: None
+    :return: pandas DataFrame with removed nans
     """
 
     nan_props = get_nan_col_proportions(df, prop_threshold)
@@ -127,7 +141,6 @@ def print_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderat
     :param df: pandas DataFrame to look into.
     :param col_to_correlate: String that represents column we want to check correlations with.
     :param moderate_value: Which correlation value we deem as moderate (default 0.4).
-    :return: None
     """
 
     if df[col_to_correlate].dtype.name == 'category':
@@ -293,6 +306,15 @@ def evaluate_regressor(y_actual: np.array, y_pred: np.array, metric_func: Callab
         print('CUSTOM METRIC: ', round(houses_metric, 4))
 
     return metrics
+
+
+class RegressorModel:
+
+    def __init__(self, model):
+        self.model = model
+
+    def predict(self, x):
+        return self.model.predict(x)
 
 
 def cross_validate(model, x: np.array, y: np.array, metric: Callable[[np.array, np.array], float], folds: int = 5,
