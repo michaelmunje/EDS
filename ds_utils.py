@@ -5,6 +5,7 @@ Github: https://github.com/michaelmunje/ds_utils
 
 from scipy.stats import skew
 from scipy.special import boxcox1p
+from scipy.optimize import minimize
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.ensemble import RandomForestRegressor
@@ -385,7 +386,8 @@ def get_cross_validation_models(model, x: np.array, y: np.array, metric: Callabl
     return ensemble
 
 
-def try_many_regressors(x: np.array, y: np.array, metric: Callable[[np.array, np.array], float], metric_max_better: bool = True) -> None:
+def try_many_regressors(x: np.array, y: np.array, metric: Callable[[np.array, np.array], float],
+                        metric_max_better: bool = True) -> None:
     """
     Tries a few solid regressors in sklearn and returns the best performing one
     :param x: numpy array of the features
@@ -428,3 +430,25 @@ def try_many_regressors(x: np.array, y: np.array, metric: Callable[[np.array, np
 
     print('Best performing model: ', regressors[first(best_index(scores))].__class__.__name__)
     print('Best', metric.__name__, ':', best(scores))
+
+
+def get_eval_linear_combo(linear_combo, model_preds, y_test, metric, maximize=True):
+    y_pred = sum(x * y for x, y in zip(model_preds, linear_combo))
+    return -1 * metric(y_test, y_pred) if maximize else metric(y_test, y_pred)
+
+
+def optimize_ensemble(ensemble, x_test, y_test, metric, metric_max_better: bool = True):
+
+    model_preds = list(model.predict(x_test) for model in ensemble)
+
+    x0 = np.ones(len(model_preds))
+
+    bounds = [(0, 1)] * len(x0)
+
+    cons = {'type': 'eq', 'fun': lambda x: sum(x) - 1}
+
+    optimized = minimize(get_eval_linear_combo, x0, bounds=bounds, constraints=cons, args=(model_preds, y_test,
+                                                                                           metric, metric_max_better))
+
+    return optimized.x
+
