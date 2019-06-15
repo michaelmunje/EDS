@@ -88,6 +88,12 @@ def plot_hist_distribution(df: pd.Series, col: str) -> None:
 
 
 def plot_relationship(df: pd.DataFrame, feature1: str, feature2: str) -> None:
+    """
+    Plots the relationship of 2 features to each other
+    :param df: pandas DataFrame where features are contained
+    :param feature1: feature 1's column name
+    :param feature2: feature 2's column name
+    """
 
     plt.scatter(df[feature1], df[feature2],
                 s=50, color='blue', label='Normal')
@@ -448,29 +454,47 @@ def try_many_regressors(x: np.array, y: np.array, metric: Callable[[np.array, np
 
     best_index = np.argmax if metric_max_better else np.argmin
     best = np.amax if metric_max_better else np.amin
-    first = lambda x: x[0] if len(x) > 1 else x
+    first = lambda s: s[0] if len(s) > 1 else s
 
     print('Best performing model: ', regressors[first(best_index(scores))].__class__.__name__)
     print('Best', metric.__name__, ':', best(scores))
 
 
-def get_eval_linear_combo(linear_combo, model_preds, y_test, metric, maximize=True):
-    y_pred = sum(x * y for x, y in zip(model_preds, linear_combo))
+def evaluate_ensemble_weights(weights: np.array, model_preds: np.array, y_test: np.array,
+                          metric: Callable[[np.array, np.array], float], maximize: bool = True) -> float:
+    """
+    Computes the metric of the ensemble according to some weights
+    :param weights: the weights of each model (their priority for the prediction)
+    :param model_preds: the precomputed predictions of each model (cross validated predictions)
+    :param y_test: numpy.array of true values
+    :param metric: metric to evaluate ensemble
+    :param maximize: if a higher score means better
+    :return: the computed metric of the ensemble (or negative of it)
+    """
+
+    y_pred = sum(x * y for x, y in zip(model_preds, weights))
     return -1 * metric(y_test, y_pred) if maximize else metric(y_test, y_pred)
 
 
-def optimize_ensemble(ensemble, x_test, y_test, metric, metric_max_better: bool = True):
+def optimize_ensemble(ensemble: EnsembleRegressor, x_test: np.array, y_test: np.array,
+                      metric: Callable[[np.array, np.array], float], metric_max_better: bool = True) -> np.array:
+    """
+    Optimizes the weights in the ensemble model
+    :param ensemble: The ensemble containing all the models
+    :param x_test: numpy array of testing features
+    :param y_test: numpy array of testing predictors
+    :param metric: evaluation metric to optimize
+    :param metric_max_better: if higher metric score means better
+    :return: The optimized weights of the ensemble model
+    """
 
-    model_preds = list(model.predict(x_test) for model in ensemble)
-
+    model_preds = np.array((model.predict(x_test) for model in ensemble.models))
     x0 = np.ones(len(model_preds))
-
     bounds = [(0, 1)] * len(x0)
-
     cons = {'type': 'eq', 'fun': lambda x: sum(x) - 1}
 
-    optimized = minimize(get_eval_linear_combo, x0, bounds=bounds, constraints=cons, args=(model_preds, y_test,
-                                                                                           metric, metric_max_better))
+    optimized = minimize(evaluate_ensemble_weights, x0, bounds=bounds, constraints=cons,
+                         args=(model_preds, y_test, metric, metric_max_better))
 
     return optimized.x
 
