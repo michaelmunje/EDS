@@ -27,6 +27,8 @@ from sklearn.metrics import mean_squared_error
 from sklearn.metrics import accuracy_score
 from sklearn.utils import shuffle
 from matplotlib import pyplot as plt
+from typing import Callable
+import copy
 import pandas as pd
 import numpy as np
 
@@ -266,7 +268,7 @@ def adjust_skewness(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def evaluate_regressor(y_actual: np.array, y_pred: np.array, metric_func: function = None) -> [float]:
+def evaluate_regressor(y_actual: np.array, y_pred: np.array, metric_func: Callable[[np.array, np.array], float]) -> [float]:
     """
     Evaluates the prediction results of a regressor.
     :param y_actual: numpy array of actual values
@@ -292,7 +294,7 @@ def evaluate_regressor(y_actual: np.array, y_pred: np.array, metric_func: functi
     return metrics
 
 
-def cross_validate(model, x: np.array, y: np.array, metric: function, folds: int = 5,
+def cross_validate(model, x: np.array, y: np.array, metric: Callable[[np.array, np.array], float], folds: int = 5,
                    repeats: int = 3, verbose: bool = True) -> float:
     """
     Perform k-fold cross-validation using the out of the bag score.
@@ -330,12 +332,60 @@ def cross_validate(model, x: np.array, y: np.array, metric: function, folds: int
     return mean[0] if len(mean) > 1 else mean
 
 
-class Ensemble:
-    def __init__(self, model):
-        self.model = model
+class EnsembleRegressor:
+
+    def __init__(self, models):
+        self.models = models
+
+    def predict(self, x: np.array) -> np.array:
+        total = np.zeros(len(x))
+        for model in self.models:
+            total += model.predict(x)
+        total /= len(self.models)
+        return total
 
 
-def try_many_regressors(x: np.array, y: np.array, metric: function, metric_max_better: bool = True) -> None:
+def get_cross_validation_models(model, x: np.array, y: np.array, metric: Callable[[np.array, np.array], float], folds: int = 5,
+                   repeats: int = 3, verbose: bool = True) -> EnsembleRegressor:
+    """
+    Perform k-fold cross-validation using the out of the bag score.
+    :param model: scikit-learn like model to perform cross validation on
+    :param x: numpy array of features
+    :param y: numpy array of predictors
+    :param metric: what metric to use to evaluate the models
+    :param folds: number of folds. Default = 5.
+    :param repeats: number of times to repeat the whole process (different random splitting). Default = 3.
+    :param verbose: Whether to print progress messages. Default = True.
+    :return: the average metric score across all folds and repeats
+    """
+
+    y_pred = np.zeros(len(y))
+    score = np.zeros(repeats)
+    ensemble = EnsembleRegressor([])
+
+    for r in range(repeats):
+        if verbose:
+            print('Running k-fold cross-validation ', r + 1, '/', repeats)
+        x, y = shuffle(x, y, random_state=r)
+
+        for i, (train_ind, test_ind) in enumerate(KFold(n_splits=folds, random_state=r + 10).split(x)):
+            if verbose:
+                print('Computing fold ', i + 1, '/', folds)
+            x_train, y_train = x[train_ind, :], y[train_ind]
+            x_test, y_test = x[test_ind, :], y[test_ind]
+            model.fit(x_train, y_train)
+            ensemble.models.append(copy.copy(model))
+            y_pred[test_ind] = model.predict(x_test)
+        score[r] = metric(y_pred, y)
+
+    print('Evaluation metric:', metric.__name__)
+    print('Average:', np.round(np.mean(score), 4))
+    print('Std. Dev:', np.round(np.std(score), 4))
+
+    return ensemble
+
+
+def try_many_regressors(x: np.array, y: np.array, metric: Callable[[np.array, np.array], float], metric_max_better: bool = True) -> None:
     """
     Tries a few solid regressors in sklearn and returns the best performing one
     :param x: numpy array of the features
@@ -363,8 +413,9 @@ def try_many_regressors(x: np.array, y: np.array, metric: function, metric_max_b
     nn = MLPRegressor(hidden_layer_sizes=(1000, 10), learning_rate='adaptive',
                       max_iter=1000, random_state=42, early_stopping=True)
     svm_r = svm.SVR(kernel='poly', gamma='auto')
+    knn = KNeighborsRegressor(n_neighbors=5)
 
-    regressors = [gb, gb2, lasso, elastic, rf, rrf, huber, linear, nn, svm_r]
+    regressors = [gb, gb2, lasso, elastic, rf, rrf, huber, linear, nn, svm_r, knn]
     scores = np.zeros(len(regressors))
 
     for i, r in enumerate(regressors):
