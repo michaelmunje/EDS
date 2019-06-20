@@ -11,6 +11,9 @@ from sklearn.model_selection import KFold
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.preprocessing import RobustScaler
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
@@ -26,6 +29,7 @@ from sklearn import svm
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import cross_val_score
 from sklearn.utils import shuffle
 from matplotlib import pyplot as plt
 from typing import Callable
@@ -146,7 +150,7 @@ def get_nan_col_proportions(df: pd.DataFrame, lowest_proportion: float = 0.0) ->
     values = list(zip(list(df.isnull().columns), list(df.isnull().any())))
     filtered = list(filter(lambda x: x[1][1] == True, enumerate(values)))
     contains_nan = [y for x, y in filtered]
-    proportion_nan = [sum(df[x].isnull()) / len(df[x]) for x, y in contains_nan]
+    proportion_nan = [round(sum(df[x].isnull()) / len(df[x]), 3) for x, y in contains_nan]
     proportion_nan = [(x[0], proportion_nan[i]) for i, x in enumerate(contains_nan)]
     nan_prop_list = list()
     for col, propo_nan in proportion_nan:
@@ -187,7 +191,7 @@ def print_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderat
             print(col, ': ', corr_value)
 
 
-def remove_weak_correlations(df: pd.DataFrame, col_to_correlate: str, weak_threshold: float = 0.05) -> pd.DataFrame:
+def remove_weak_correlations(df1: pd.DataFrame, df2, y, weak_threshold: float = 0.1) -> (pd.DataFrame, pd.DataFrame):
     """
     Removes weak correlations
     :param df: pandas DataFrame to remove columns from.
@@ -195,13 +199,33 @@ def remove_weak_correlations(df: pd.DataFrame, col_to_correlate: str, weak_thres
     :param weak_threshold: float number that counts as an absolute weak threshold
     :return: pandas DataFrame without the columns weakly correlated to target
     """
-    cols = df[df.columns].corr().columns
-    corrs = df[df.columns].corr()[col_to_correlate]
-    weakly_correlated = list()
+    col_to_correlate = 'PREDICTOR_TO_CHECK_WEAK_CORRS'
+    df1[col_to_correlate] = y
+    cols = df1[df1.columns].corr().columns
+    corrs = df1[df1.columns].corr()[col_to_correlate]
+    strongly_correlated = list()
     for col, corr in zip(cols, corrs):
-        if abs(corr) < weak_threshold and col != col_to_correlate:
-            weakly_correlated.append(col)
-    return df.drop(columns=weakly_correlated)
+        if abs(corr) >= weak_threshold and col != col_to_correlate:
+            strongly_correlated.append(col)
+    df1 = df1.drop(columns=[col_to_correlate])
+    for col in df1.columns:
+        if col not in strongly_correlated:
+            df1.drop(columns=[col], inplace=True)
+            df2.drop(columns=[col], inplace=True)
+    return df1, df2
+
+
+def evaluate_classifier(clf, x, y):
+    scores = cross_val_score(clf, x, y, cv=5)
+    print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+
+
+def get_rid_feature(df, df2, feat):
+    for column in df:
+        if column.startswith(feat):
+            df.drop(columns=[column], inplace=True)
+            df2.drop(columns=[column], inplace=True)
+    return df, df2
 
 
 def convert_categorical_to_numbers(to_change_df: pd.DataFrame) -> pd.DataFrame:
@@ -227,7 +251,7 @@ def convert_objects_to_categories(to_change_df: pd.DataFrame) -> pd.DataFrame:
     return to_change_df
 
 
-def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> pd.DataFrame:
+def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> None:
     """
     Replace the missing values in the given column using machine learning predictions
     :param df: pandas DataFrame to use as features (and predictor column)
@@ -239,12 +263,13 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> pd.DataFra
     dummified_df = df.copy()
 
     cols_to_drop = filter(lambda t: t[1], zip(df.columns, df.isnull().any()))
+    cols_to_drop = list(x[0] for x in cols_to_drop)
     dummified_df = dummified_df.drop(columns=cols_to_drop)
     dummified_df = convert_categorical_to_numbers(dummified_df)
 
     dummified_df[col_to_predict] = y
 
-    df_to_model = dummified_df[dummified_df[not col_to_predict].isnull()]
+    df_to_model = dummified_df.dropna(subset=[col_to_predict])
 
     df_to_predict = dummified_df[dummified_df[col_to_predict].isnull()]
     df_to_predict = df_to_predict.drop(columns=[col_to_predict])
@@ -254,11 +279,14 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> pd.DataFra
 
     x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42)
 
-    if df[col_to_predict].dtype.name == 'category':
-        rf = GradientBoostingClassifier(learning_rate=0.05, max_features='sqrt',
-                                        min_impurity_split=None, min_samples_leaf=15,
-                                        min_samples_split=10, n_estimators=12000)
+    is_classify = True
+
+    if df[col_to_predict].dtype.name == 'object':
+        rf = GradientBoostingClassifier(n_estimators=3000, learning_rate=0.05,
+                                        max_depth=4, max_features='sqrt',
+                                        min_samples_leaf=15, min_samples_split=10)
     else:
+        is_classify = False
         rf = GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
                                        max_depth=4, max_features='sqrt',
                                        min_samples_leaf=15, min_samples_split=10,
@@ -280,7 +308,6 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> pd.DataFra
         print('RMSE        : ', round(rmse, 2))
 
     df.loc[df[col_to_predict].isnull(), col_to_predict] = rf.predict(df_to_predict.values)
-    return df
 
 
 def remove_constant_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -293,7 +320,33 @@ def remove_constant_columns(df: pd.DataFrame) -> pd.DataFrame:
     return df.loc[:, df.apply(pd.Series.nunique) != 1]
 
 
-def adjust_skewness(df: pd.DataFrame) -> pd.DataFrame:
+def rank_features(X, Y):
+    forest = ExtraTreesClassifier(n_estimators=250,
+                                  random_state=0)
+    forest.fit(X, Y)
+    importances = forest.feature_importances_
+    std = np.std([tree.feature_importances_ for tree in forest.estimators_],
+                 axis=0)
+    indices = np.argsort(importances)[::-1]
+
+    # Print the feature ranking
+    print("Feature ranking:")
+
+    for f in range(X.shape[1]):
+        print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
+
+    # Plot the feature importances of the forest
+    plt.figure()
+    plt.title("Feature importances")
+    plt.bar(range(X.shape[1]), importances[indices],
+           color="r", yerr=std[indices], align="center")
+    plt.xticks(range(X.shape[1]), indices)
+    plt.xlim([-1, X.shape[1]])
+    plt.show()
+    return indices
+
+
+def adjust_skewness(df: pd.DataFrame, specific: str = None) -> pd.DataFrame:
     """
     Adjusts the skewness of all columns by finding highly skewed columns
     and performing a boxcox transformation
@@ -301,11 +354,13 @@ def adjust_skewness(df: pd.DataFrame) -> pd.DataFrame:
     :return: pandas DataFrame with skew adjusted columns
     """
 
-    numerics = filter(lambda x: x[1].name != 'object' and x[1].name != 'category', zip(df.columns, df.dtypes))
+    numerics = list(x[0] for x in (filter(lambda x: x[1].name != 'object' and x[1].name != 'category', zip(df.columns, df.dtypes))))
     skewed_feats = df[numerics].apply(lambda x: skew(x.dropna())).sort_values(ascending=False)
     skewness = pd.DataFrame({'Skew': skewed_feats})
     skewness = skewness[abs(skewness) > 0.7]
     skewed_features = skewness.index
+    if specific:
+        skewed_features = [specific]
     lam = 0.15
 
     for feat in skewed_features:
