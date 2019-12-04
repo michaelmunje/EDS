@@ -3,10 +3,53 @@ from scipy.stats import skew
 from scipy.special import boxcox1p
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+
+def rank_features(X, Y, classify=True, plot=False, columns=None):
+
+    if classify:
+        forest = ExtraTreesClassifier(n_estimators=250,
+                                    random_state=1337)
+    else:
+        forest = ExtraTreesRegressor(n_estimators=250,
+                            random_state=1337)
+
+    forest.fit(X, Y)
+    importances = forest.feature_importances_
+    std = np.std([tree.feature_importances_ for tree in forest.estimators_], axis=0)
+    indices = np.argsort(importances)[::-1]
+
+    # Print the feature ranking
+    print("Feature ranking:")
+
+    if columns is None:
+        for i in range(X.shape[1]):
+            print("Feature %d\t : %f" % (indices[i], importances[indices[i]]))
+    else:
+        for i in range(X.shape[1]):
+            print("%s\t : %f" % (columns[i], importances[indices[i]]))
+
+
+    if plot:
+        # Plot the feature importances of the forest
+        plt.figure()
+        plt.title("Feature importances")
+        plt.bar(range(X.shape[1]), importances[indices], color="b", yerr=std[indices], align="center")
+        labels = indices if columns is None else columns
+        plt.xticks(range(X.shape[1]), labels)
+        plt.xlim([-1, X.shape[1]])
+        fig = plt.gcf()
+        fig.set_size_inches(8, 8)
+        plt.show()
 
 
 def adjust_skewness(df: pd.DataFrame, specific: str = None) -> pd.DataFrame:
