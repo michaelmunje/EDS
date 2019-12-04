@@ -31,10 +31,10 @@ def rank_features(X, Y, classify=True, plot=False, columns=None):
 
     if columns is None:
         for i in range(X.shape[1]):
-            print("Feature %d\t : %f" % (indices[i], importances[indices[i]]))
+            print(f"Feature {indices[i]}\t : {round(importances[indices[i]], 2)}")
     else:
         for i in range(X.shape[1]):
-            print("%s\t : %f" % (columns[indices[i]], importances[indices[i]]))
+            print(f"{columns[indices[i]]}\t : {round(importances[indices[i]], 2)}")
 
     if plot:
         plt.figure()
@@ -148,7 +148,7 @@ def remove_weak_correlations(df1: pd.DataFrame, df2, y, weak_threshold: float = 
             df2.drop(columns=[col], inplace=True)
     return df1, df2
               
-              
+
 def get_rid_feature(df, df2, feat):
     for column in df:
         if column.startswith(feat):
