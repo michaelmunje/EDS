@@ -1,4 +1,5 @@
 import sklearn
+import numpy as np
 
 
 def apply_scale(x_train: np.array, x_test: np.array, scale_type: str = 'Standard') -> (np.array, np.array):
