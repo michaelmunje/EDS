@@ -29,8 +29,8 @@ from typing import Callable
 import numpy as np
 
 
-def evaluate_classifier(clf, x: np.array, y: np.array) -> np.array:
-    scores = cross_val_score(clf, x, y, cv=10)
+def evaluate_model(model, x: np.array, y: np.array) -> np.array:
+    scores = cross_val_score(model, x, y, cv=10)
     print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2)) # 95% confidence interval
     return scores
 
@@ -56,18 +56,9 @@ def evaluate_regressor(y_actual: np.array, y_pred: np.array, metric_func: Callab
     if metric_func: 
         custom_metric = metric_func(y_actual, y_pred)
         metrics.append(custom_metric)
-        print('CUSTOM METRIC: ', round(custom_metric, 4))
+        print('CUSTOM METRIC\t: ', round(custom_metric, 4))
 
     return metrics
-
-
-class RegressorModel:
-
-    def __init__(self, model):
-        self.model = model
-
-    def predict(self, x):
-        return self.model.predict(x)
 
 
 def cross_validate(model, x: np.array, y: np.array, metric: Callable[[np.array, np.array], float], folds: int = 5,
@@ -108,6 +99,15 @@ def cross_validate(model, x: np.array, y: np.array, metric: Callable[[np.array, 
     return mean[0] if len(mean) > 1 else mean
 
 
+class RegressorModel:
+
+    def __init__(self, model):
+        self.model = model
+
+    def predict(self, x):
+        return self.model.predict(x)
+
+        
 class EnsembleRegressor:
 
     def __init__(self, models):

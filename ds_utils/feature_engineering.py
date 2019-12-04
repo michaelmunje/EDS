@@ -122,7 +122,7 @@ def print_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderat
     corrs_value = corrs[col_to_correlate]
     for col, corr_value in zip(cols, corrs_value):
         if abs(corr_value) > moderate_value and col != col_to_correlate:
-            print(col, ': ', corr_value)
+            print(col, ' : ', round(corr_value, 2))
 
 
 def remove_weak_correlations(df1: pd.DataFrame, df2, y, weak_threshold: float = 0.1) -> (pd.DataFrame, pd.DataFrame):
@@ -147,6 +147,7 @@ def remove_weak_correlations(df1: pd.DataFrame, df2, y, weak_threshold: float = 
             df1.drop(columns=[col], inplace=True)
             df2.drop(columns=[col], inplace=True)
     return df1, df2
+              
               
 def get_rid_feature(df, df2, feat):
     for column in df:
