@@ -149,12 +149,14 @@ def remove_weak_correlations(df1: pd.DataFrame, df2, y, weak_threshold: float = 
     return df1, df2
               
 
-def get_rid_feature(df, df2, feat):
-    for column in df:
-        if column.startswith(feat):
-            df.drop(columns=[column], inplace=True)
-            df2.drop(columns=[column], inplace=True)
-    return df, df2
+def remove_constant_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Removes all redundant columns which have the same value across the column
+    :param df: pandas DataFrame to remove redundant columns from
+    :return: pandas DataFrame without redundant columns
+    """
+
+    return df.loc[:, df.apply(pd.Series.nunique) != 1]
 
 
 def convert_categorical_to_numbers(to_change_df: pd.DataFrame) -> pd.DataFrame:
@@ -187,12 +189,14 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> None:
     :param col_to_predict: string that represents the predictor column
     :return: pandas DataFrame with filled predictor column values via machine learning
     """
+
     y = df[col_to_predict].values
 
     dummified_df = df.copy()
 
     cols_to_drop = filter(lambda t: t[1], zip(df.columns, df.isnull().any()))
     cols_to_drop = list(x[0] for x in cols_to_drop)
+
     dummified_df = dummified_df.drop(columns=cols_to_drop)
     dummified_df = convert_categorical_to_numbers(dummified_df)
 
@@ -206,7 +210,7 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> None:
     y = df_to_model[col_to_predict]
     x = df_to_model.drop(columns=[col_to_predict]).values
 
-    x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1337)
 
     is_classify = True
 
@@ -237,13 +241,3 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> None:
         print('RMSE        : ', round(rmse, 2))
 
     df.loc[df[col_to_predict].isnull(), col_to_predict] = rf.predict(df_to_predict.values)
-
-
-def remove_constant_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Removes all redundant columns which have the same value across the column
-    :param df: pandas DataFrame to remove redundant columns from
-    :return: pandas DataFrame without redundant columns
-    """
-
-    return df.loc[:, df.apply(pd.Series.nunique) != 1]
