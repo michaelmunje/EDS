@@ -1,6 +1,7 @@
 import pandas as pd
 from scipy.stats import skew
 from scipy.special import boxcox1p
+import sklearn
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.ensemble import ExtraTreesRegressor
@@ -265,7 +266,7 @@ def apply_scale(x_train: np.array, x_test: np.array, scale_type: str = 'Standard
     return scaler.transform(x_train), scaler.transform(x_test)
 
 
-def apply_pca(x_train: np.array, x_test: np.array, n_comps: float) -> (np.array, np.array):
+def apply_pca(x_train: np.array, x_test: np.array, n_comps: float = 0.975) -> (np.array, np.array):
     """
     Apply PCA to the data according to the distribution of x_train
     :param x_train: numpy.array to scale via its distribution
