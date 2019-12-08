@@ -29,35 +29,10 @@ from typing import Callable
 import numpy as np
 
 
-def evaluate_classifier(clf, x, y):
-    scores = cross_val_score(clf, x, y, cv=5)
-    print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-    
-
-# def rank_features(X, Y):
-#     forest = ExtraTreesClassifier(n_estimators=250,
-#                                   random_state=0)
-#     forest.fit(X, Y)
-#     importances = forest.feature_importances_
-#     std = np.std([tree.feature_importances_ for tree in forest.estimators_],
-#                  axis=0)
-#     indices = np.argsort(importances)[::-1]
-
-#     # Print the feature ranking
-#     print("Feature ranking:")
-
-#     for f in range(X.shape[1]):
-#         print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
-
-#     # Plot the feature importances of the forest
-#     plt.figure()
-#     plt.title("Feature importances")
-#     plt.bar(range(X.shape[1]), importances[indices],
-#            color="r", yerr=std[indices], align="center")
-#     plt.xticks(range(X.shape[1]), indices)
-#     plt.xlim([-1, X.shape[1]])
-#     plt.show()
-#     return indices
+def evaluate_model(model, x: np.array, y: np.array) -> np.array:
+    scores = cross_val_score(model, x, y, cv=10)
+    print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2)) # 95% confidence interval
+    return scores
 
 
 def evaluate_regressor(y_actual: np.array, y_pred: np.array, metric_func: Callable[[np.array, np.array], float]) -> [float]:
@@ -74,25 +49,16 @@ def evaluate_regressor(y_actual: np.array, y_pred: np.array, metric_func: Callab
     rmse = mse ** (1 / 2)
     metrics = [r2, mse, rmse]
 
-    print('R2          : ', round(r2, 4))
-    print('MSE        : ', round(mse, 4))
-    print('RMSE        : ', round(rmse, 4))
+    print('R2\t: ', round(r2, 4))
+    print('MSE\t: ', round(mse, 4))
+    print('RMSE\t: ', round(rmse, 4))
 
     if metric_func: 
         custom_metric = metric_func(y_actual, y_pred)
         metrics.append(custom_metric)
-        print('CUSTOM METRIC: ', round(custom_metric, 4))
+        print('CUSTOM METRIC\t: ', round(custom_metric, 4))
 
     return metrics
-
-
-class RegressorModel:
-
-    def __init__(self, model):
-        self.model = model
-
-    def predict(self, x):
-        return self.model.predict(x)
 
 
 def cross_validate(model, x: np.array, y: np.array, metric: Callable[[np.array, np.array], float], folds: int = 5,
@@ -133,6 +99,15 @@ def cross_validate(model, x: np.array, y: np.array, metric: Callable[[np.array, 
     return mean[0] if len(mean) > 1 else mean
 
 
+class RegressorModel:
+
+    def __init__(self, model):
+        self.model = model
+
+    def predict(self, x):
+        return self.model.predict(x)
+
+        
 class EnsembleRegressor:
 
     def __init__(self, models):
