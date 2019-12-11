@@ -1,35 +1,21 @@
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import ExtraTreesRegressor
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.ensemble import GradientBoostingClassifier
+from sklearn import ensemble
 from sklearn import svm
 from sklearn.model_selection import KFold
-from sklearn.preprocessing import RobustScaler
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import RobustScaler
-from sklearn.linear_model import Lasso
-from sklearn.linear_model import ElasticNet
-from sklearn.linear_model import HuberRegressor
-from sklearn.linear_model import LinearRegression
+from sklearn import preprocessing
+from sklearn import linear_model
 from sklearn.neural_network import MLPRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.pipeline import make_pipeline
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.metrics import r2_score
-from sklearn.metrics import mean_squared_error
-from sklearn.metrics import accuracy_score
+from sklearn import metrics
 from sklearn.model_selection import cross_val_score
 from sklearn.utils import shuffle
 from scipy.optimize import minimize
-import copy
 from typing import Callable
 import numpy as np
+import copy
 
 
-def evaluate_model(model, x: np.array, y: np.array) -> np.array:
+def evaluate_model_cross_val(model, x: np.array, y: np.array) -> np.array:
     scores = cross_val_score(model, x, y, cv=10)
     print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2)) # 95% confidence interval
     return scores
@@ -44,8 +30,8 @@ def evaluate_regressor(y_actual: np.array, y_pred: np.array, metric_func: Callab
     :return: Returns the evaluation metrics for the regressor.
     """
 
-    r2 = r2_score(y_actual, y_pred)
-    mse = mean_squared_error(y_actual, y_pred)
+    r2 = metrics.r2_score(y_actual, y_pred)
+    mse = metrics.mean_squared_error(y_actual, y_pred)
     rmse = mse ** (1 / 2)
     metrics = [r2, mse, rmse]
 
@@ -171,22 +157,22 @@ def try_many_regressors(x: np.array, y: np.array, metric: Callable[[np.array, np
     :param metric_max_better: If the metric's higher value means better value
     """
 
-    gb = GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
+    gb = ensemble.GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
                                    max_depth=4, max_features='sqrt',
                                    min_samples_leaf=15, min_samples_split=10,
                                    loss='huber', random_state=42)
 
-    gb2 = GradientBoostingRegressor(learning_rate=0.05, max_features='sqrt', loss='huber',
+    gb2 = ensemble.GradientBoostingRegressor(learning_rate=0.05, max_features='sqrt', loss='huber',
                                     min_impurity_split=None, min_samples_leaf=15,
                                     min_samples_split=10, n_estimators=12000,
                                     random_state=42)
 
-    lasso = make_pipeline(RobustScaler(), Lasso(alpha=0.0005, random_state=42))
-    elastic = make_pipeline(RobustScaler(), ElasticNet(alpha=0.0005, l1_ratio=.9, max_iter=10000, random_state=42))
-    rf = RandomForestRegressor(n_estimators=200, min_samples_leaf=3, random_state=42)
-    rrf = ExtraTreesRegressor(n_estimators=200, min_samples_leaf=3, random_state=42)
-    huber = HuberRegressor()
-    linear = LinearRegression()
+    lasso = make_pipeline(preprocesisng.RobustScaler(), linear_model.Lasso(alpha=0.0005, random_state=42))
+    elastic = make_pipeline(preprocessing.RobustScaler(), linear_model.ElasticNet(alpha=0.0005, l1_ratio=.9, max_iter=10000, random_state=42))
+    rf = ensemble.RandomForestRegressor(n_estimators=200, min_samples_leaf=3, random_state=42)
+    rrf = ensemble.ExtraTreesRegressor(n_estimators=200, min_samples_leaf=3, random_state=42)
+    huber = linear_model.HuberRegressor()
+    linear = linear_model.LinearRegression()
     nn = MLPRegressor(hidden_layer_sizes=(1000, 10), learning_rate='adaptive',
                       max_iter=1000, random_state=42, early_stopping=True)
     svm_r = svm.SVR(kernel='poly', gamma='auto')
@@ -218,22 +204,22 @@ def get_ensembles_many_regressors(x: np.array, y: np.array, metric: Callable[[np
     :param metric_max_better: If the metric's higher value means better value
     """
 
-    gb = GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
+    gb = ensemble.GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
                                    max_depth=4, max_features='sqrt',
                                    min_samples_leaf=15, min_samples_split=10,
                                    loss='huber', random_state=42)
 
-    gb2 = GradientBoostingRegressor(learning_rate=0.05, max_features='sqrt', loss='huber',
+    gb2 = ensemble.GradientBoostingRegressor(learning_rate=0.05, max_features='sqrt', loss='huber',
                                     min_impurity_split=None, min_samples_leaf=15,
                                     min_samples_split=10, n_estimators=12000,
                                     random_state=42)
 
-    lasso = make_pipeline(RobustScaler(), Lasso(alpha=0.0005, random_state=42))
-    elastic = make_pipeline(RobustScaler(), ElasticNet(alpha=0.0005, l1_ratio=.9, max_iter=10000, random_state=42))
-    rf = RandomForestRegressor(n_estimators=200, min_samples_leaf=3, random_state=42)
-    rrf = ExtraTreesRegressor(n_estimators=200, min_samples_leaf=3, random_state=42)
-    huber = HuberRegressor()
-    linear = LinearRegression()
+    lasso = make_pipeline(preprocessing.RobustScaler(), linear_model.Lasso(alpha=0.0005, random_state=42))
+    elastic = make_pipeline(preprocessing.RobustScaler(), linear_model.ElasticNet(alpha=0.0005, l1_ratio=.9, max_iter=10000, random_state=42))
+    rf = ensemble.RandomForestRegressor(n_estimators=200, min_samples_leaf=3, random_state=42)
+    rrf = ensemble.ExtraTreesRegressor(n_estimators=200, min_samples_leaf=3, random_state=42)
+    huber = linear_model.HuberRegressor()
+    linear = linear_model.LinearRegression()
     nn = MLPRegressor(hidden_layer_sizes=(1000, 10), learning_rate='adaptive',
                       max_iter=1000, random_state=42, early_stopping=True)
     svm_r = svm.SVR(kernel='poly', gamma='auto')
