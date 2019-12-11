@@ -3,6 +3,7 @@ from scipy.special import boxcox1p
 from sklearn import ensemble
 from sklearn import metrics
 from sklearn import preprocessing
+from sklearn import decomposition
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -270,6 +271,6 @@ def apply_pca(x_train: np.array, x_test: np.array, n_comps: float = 0.975) -> (n
     :return: x_train and x_test with PCA applied.
     """
 
-    pca = sklearn.decomposition.PCA(n_components=n_comps)
+    pca = decomposition.PCA(n_components=n_comps)
     pca.fit(x_train) # Correct to use only the training data to not bias our model's test evaluation
     return pca.transform(x_train), pca.transform(x_test)
