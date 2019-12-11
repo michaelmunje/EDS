@@ -1,26 +1,21 @@
-import pandas as pd
 from scipy.stats import skew
 from scipy.special import boxcox1p
-import sklearn
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.ensemble import ExtraTreesRegressor
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.metrics import mean_squared_error
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import r2_score
+from sklearn import ensemble
+from sklearn import metrics
+from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
+import pandas as pd
 import numpy as np
 
 
 def rank_features(X, Y, classify=True, plot=False, columns=None):
 
     if classify:
-        forest = ExtraTreesClassifier(n_estimators=250,
+        forest = ensemble.ExtraTreesClassifier(n_estimators=250,
                                     random_state=1337)
     else:
-        forest = ExtraTreesRegressor(n_estimators=250,
+        forest = ensemble.ExtraTreesRegressor(n_estimators=250,
                             random_state=1337)
 
     forest.fit(X, Y)
@@ -216,12 +211,12 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> None:
     is_classify = True
 
     if df[col_to_predict].dtype.name == 'object':
-        rf = GradientBoostingClassifier(n_estimators=3000, learning_rate=0.05,
+        rf = ensemble.GradientBoostingClassifier(n_estimators=3000, learning_rate=0.05,
                                         max_depth=4, max_features='sqrt',
                                         min_samples_leaf=15, min_samples_split=10)
     else:
         is_classify = False
-        rf = GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
+        rf = ensemble.GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
                                        max_depth=4, max_features='sqrt',
                                        min_samples_leaf=15, min_samples_split=10,
                                        loss='huber')
@@ -232,11 +227,11 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> None:
     print("------Evaluation-------")
 
     if is_classify:
-        acc = accuracy_score(y_test, rf.predict(x_test))
+        acc = metrics.accuracy_score(y_test, rf.predict(x_test))
         print('ACC         : ', round(acc, 4))
     else:
-        r2 = r2_score(y_test, rf.predict(x_test))
-        mse = mean_squared_error(y_test, rf.predict(x_test))
+        r2 = metrics.r2_score(y_test, rf.predict(x_test))
+        mse = metrics.mean_squared_error(y_test, rf.predict(x_test))
         rmse = mse ** (1 / 2)
         print('R2          : ', round(r2, 4))
         print('RMSE        : ', round(rmse, 2))
@@ -254,11 +249,11 @@ def apply_scale(x_train: np.array, x_test: np.array, scale_type: str = 'Standard
     """
 
     if scale_type == 'Standard':
-        scaler = sklearn.preprocessing.StandardScaler()
+        scaler = preprocessing.StandardScaler()
     elif scale_type == 'Robust':
-        scaler = sklearn.preprocessing.RobustScaler()
+        scaler = preprocessing.RobustScaler()
     elif scale_type == 'MinMax':
-        scaler = sklearn.preprocessing.MinMaxScaler()
+        scaler = preprocessing.MinMaxScaler()
     else:
         raise Exception('Invalid string input for scale_type')
 
