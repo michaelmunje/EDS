@@ -167,7 +167,7 @@ def try_many_regressors(x: np.array, y: np.array, metric: Callable[[np.array, np
                                     min_samples_split=10, n_estimators=12000,
                                     random_state=42)
 
-    lasso = make_pipeline(preprocesisng.RobustScaler(), linear_model.Lasso(alpha=0.0005, random_state=42))
+    lasso = make_pipeline(preprocessing.RobustScaler(), linear_model.Lasso(alpha=0.0005, random_state=42))
     elastic = make_pipeline(preprocessing.RobustScaler(), linear_model.ElasticNet(alpha=0.0005, l1_ratio=.9, max_iter=10000, random_state=42))
     rf = ensemble.RandomForestRegressor(n_estimators=200, min_samples_leaf=3, random_state=42)
     rrf = ensemble.ExtraTreesRegressor(n_estimators=200, min_samples_leaf=3, random_state=42)
