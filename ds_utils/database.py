@@ -1,81 +1,72 @@
 import pandas as pd
 import sqlite3
-import pandas as pd
-import glob
-from sqlite3 import Error
+
+class Database:
+    def __init__(self, db_loc: str) -> Database:
+        self.connection = sqlite3.connect(db_loc)
+        self.cursor = self.connection.cursor()
 
 
-def db_execute_command(con: sqlite3.Connection, statement: str) -> None:
+    def execute_command(self, statement: str) -> None:
+        '''
+        Attempts to execute a command
+        '''
+        try:
+            self.cursor.execute(statement)
+        except sqlite3.Error as e:
+            print(e)
+
+
+    def fetch_table_names(self) -> [str]:
+        '''
+        Retrieves all tables in the database
+        '''
+        self.execute_command('SELECT name FROM sqlite_master WHERE type = \'table\';')
+        return [x[0] for x in self.cursor.fetchall()]
+
+
+    def fetch_column_names(self, table: str) -> [str]:
+        '''
+        Retrieves all columns in a table
+        '''
+        self.execute_command('PRAGMA table_info(' + table + ');')
+        return [x[1] for x in self.cursor.fetchall()]
+
+
+    def fetch_col_values(self, table: str, col: str) -> []:
+        '''
+        Returns all values for a specific column
+        '''
+        self.execute_command('SELECT ' + col + ' FROM ' + table + ';')
+        return [x[0] for x in self.cursor.fetchall()]
+
+
+def rename_bad_cols(df: pd.DataFrame, chs: [str] = ['\'', '-', ' ', '(', ')', '/']) -> pd.DataFrame:
     '''
-    Attempts to execute a command
+    In the DataFrame column names, replaces characters in chs with _
     '''
-    
-    try:
-        con.cursor()
-        con.execute(statement)
-    except Error as e:
-        print(e)
-        
+    for ch in chs:  # Assumes columns names are not very similar, i.e. Feat1\ and Feat1-
+        df.columns = df.columns.str.replace(ch, '_')
+    return df.columns
+
+
+def df_to_database(df: pd.DataFrame, db_loc: str, table_name: str) -> None:
+    df.columns = rename_bad_cols(df)
+    database = Database(db_loc)
+    for column in df.columns:
+        database.execute_command(get_column_insertion_command(table_name, column))
+    df.to_sql(table_name, database.connection, if_exists='append', index=False)
+
 
 def get_table_create_command(table: str) -> str:
     '''
-    Inserts a string representing a new table into a template for table creation in SQL
+    Generates SQL command string for table creation in SQL
     '''
-    
     return ('CREATE TABLE IF NOT EXISTS ' + table + ' (rowid INTEGER PRIMARY KEY);')
 
 
 def get_column_insertion_command(table: str, column: str) -> str:
     '''
-    Inserts strings representing a table and new column
-    into a template for column creation in SQL
+    Generates SQL command string for column insertion in table
     '''
-    
     return ('ALTER TABLE ' + table + ' ADD ' + column + ' VARCHAR;')
-
-
-def parse_df_to_database(con: sqlite3.Connection, table_name: str, df: pd.DataFrame) -> None:
-    '''
-    Adds each column of a dataframe to the sql table
-    Then inserts all dataframe entries to the table
-    '''
-    
-    for column in df.columns:
-        db_execute_command(con, get_column_insertion_command(table_name, column))
-    df.to_sql(table_name, con, if_exists='append', index=False)
-
-
-def replace_col_strings(df: pd.DataFrame, chs: [str] = ['\'', '-', ' ', '(', ')', '/']) -> pd.DataFrame:
-    '''
-    In the DataFrame column names, replaces characters in chs with _
-    '''
-    for ch in chs:
-        df.columns = df.columns.str.replace(ch, '_')
-    return df.columns
-
-
-def fetch_table_names(cur: sqlite3.Cursor) -> [str]:
-    '''
-    Retrieves all tables in the database
-    '''
-    
-    cur.execute('SELECT name FROM sqlite_master WHERE type = \'table\';')
-    return [x[0] for x in cur.fetchall()]
-
-
-def fetch_column_names(cur: sqlite3.Cursor, table: str) -> [str]:
-    '''
-    Retrieves all columns in a table
-    '''
-    
-    cur.execute('PRAGMA table_info(' + table + ');')
-    return [x[1] for x in cur.fetchall()]
-
-
-def fetch_col_values(cur: sqlite3.Cursor, table: str, col: str) -> []:
-    '''
-    Returns all values for a specific column
-    '''
-    
-    cur.execute('SELECT ' + col + ' FROM ' + table + ';')
-    return [x[0] for x in cur.fetchall()]
