@@ -3,6 +3,7 @@ from scipy.optimize import differential_evolution
 from sklearn.metrics import mean_squared_error
 import metrics
 import _default_models
+from typing import Callable
 from numpy.linalg import norm
 from abc import ABC, abstractmethod
 
@@ -10,7 +11,7 @@ from abc import ABC, abstractmethod
 class Ensemble(ABC):
 
     @abstractmethod
-    def __init__(self, models, names=None, weights=None):
+    def __init__(self, models, names: [str] = None, weights: np.array = None):
         self.models = models
         self.weights = [1/len(self.models)] * len(self.models) if not weights else weights
         self.names = names
@@ -64,7 +65,7 @@ class Ensemble(ABC):
         y_pred = sum(x * y for x, y in zip(model_preds, weights))
         return self.metric(y_test, y_pred)
 
-    def __get_cv_holdout_results(self, X: np.array, Y: np.array, prob=True, num_splits=10):
+    def __get_cv_holdout_results(self, X: np.array, Y: np.array, prob=True, num_splits=10) -> (np.array, np.array):
         cv = StratifiedKFold(n_splits=num_splits, shuffle=True, random_state=1337)
         results = [ [] for _ in range(len(self.models))]
         Y_holdout_true = []
@@ -78,7 +79,7 @@ class Ensemble(ABC):
 
 class EnsembleClassifier(Ensemble):
         
-    def __init__(self, models, names=None, weights=None, metric=roc_auc_error):
+    def __init__(self, models, names: [str] = None, weights: np.array = None, metric: Callable[[np.array, np.array], float] = roc_auc_error):
         self.metric = metric
         super().__init__(models, names, weights)
         
@@ -90,20 +91,20 @@ class EnsembleClassifier(Ensemble):
     def predict_proba(self, x: np.array) -> np.array:
         return self.predict(x, prob=True)
     
-    def _get_model_pred(self, model_index: int, x: np.array):
+    def _get_model_pred(self, model_index: int, x: np.array) -> np.array:
         return self.models[model_index].predict_proba(x)[:,1]
 
-    def get_default_models():
+    def get_default_models() -> []:
         return _default_models.get_default_classfiers()
 
-    def get_default_models_names():
+    def get_default_models_names() -> [str]:
         return _default_models.get_default_classfiers_names()
 
     
 
 class EnsembleRegressor(Ensemble):
         
-    def __init__(self, models, names=None, weights=None, metric=mean_squared_error):
+    def __init__(self, models, names: [str] = None, weights: np.array = None, metric: Callable[[np.array, np.array], float] = mean_squared_error):
         self.metric = metric
         super().__init__(models, names, weights)
         
@@ -112,11 +113,11 @@ class EnsembleRegressor(Ensemble):
         preds = sum(x * y for x, y in zip(model_preds, self.weights))
         return np.array([1 if pred >= 0.5 else 0 for pred in preds])
     
-    def _get_model_pred(self, model_index: int, X: np.array):
+    def _get_model_pred(self, model_index: int, X: np.array) -> np.array:
         return self.models[model_index].predict(X)
 
-    def get_default_models():
+    def get_default_models() -> []:
         return _default_models.get_default_regressors()
 
-    def get_default_models_names():
+    def get_default_models_names() -> [str]:
         return _default_models.get_default_regressors_names()
