@@ -20,7 +20,17 @@ class Ensemble(ABC):
     @abstractmethod
     def _get_model_pred(self, model_index: int, X: np.array):
         pass
-    
+
+    @staticmethod
+    @abstractmethod
+    def get_default_models():
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_default_models_names():
+        pass
+
     def fit(self, X: np.array, Y: np.array) -> None:
         for model in self.models:
             model.fit(X, Y)
@@ -80,6 +90,31 @@ class EnsembleClassifier(Ensemble):
     
     def _get_model_pred(self, model_index: int, x: np.array):
         return self.models[model_index].predict_proba(x)[:,1]
+
+    def get_default_models():
+        return [
+            KNeighborsClassifier(3),
+            KNeighborsClassifier(7),
+            LogisticRegression(solver='lbfgs', tol=1e-2, max_iter=200, random_state=1337),
+            RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
+            RandomForestClassifier(n_estimators=100, min_samples_leaf=3, random_state=1337),
+            GradientBoostingClassifier(n_estimators=100, learning_rate = 0.25, max_depth = 6,
+                                    max_features='sqrt', subsample=0.8, random_state=1337),
+            AdaBoostClassifier(random_state=1337),
+            GaussianNB()
+        ]
+
+    def get_default_models_names():
+        return [
+            '3-Nearest Neighbors', 
+            '7-NearestNeighbors', 
+            'Logistic Regression',
+            'Random Forest', 
+            'Random Forest (more trees)', 
+            'Gradient Boosting', 
+            'Ada Boosting', 
+            'Naive Bayes'
+        ]
     
 
 class EnsembleRegressor(Ensemble):
@@ -95,3 +130,40 @@ class EnsembleRegressor(Ensemble):
     
     def _get_model_pred(self, model_index: int, X: np.array):
         return self.models[model_index].predict(X)
+
+    def get_default_models():
+        return [
+            ensemble.GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
+                                   max_depth=4, max_features='sqrt',
+                                   min_samples_leaf=15, min_samples_split=10,
+                                   loss='huber', random_state=42),
+            ensemble.GradientBoostingRegressor(learning_rate=0.05, max_features='sqrt', loss='huber',
+                                    min_impurity_split=None, min_samples_leaf=15,
+                                    min_samples_split=10, n_estimators=12000,
+                                    random_state=42),
+
+            make_pipeline(preprocessing.RobustScaler(), linear_model.Lasso(alpha=0.0005, random_state=42)),
+            make_pipeline(preprocessing.RobustScaler(), linear_model.ElasticNet(alpha=0.0005, l1_ratio=.9, max_iter=10000, random_state=42))
+            ensemble.RandomForestRegressor(n_estimators=200, min_samples_leaf=3, random_state=42)
+            ensemble.ExtraTreesRegressor(n_estimators=200, min_samples_leaf=3, random_state=42)
+            linear_model.HuberRegressor()
+            linear_model.LinearRegression()
+            MLPRegressor(hidden_layer_sizes=(1000, 10), learning_rate='adaptive',
+                            max_iter=1000, random_state=42, early_stopping=True)
+            svm.SVR(kernel='poly', gamma='auto')
+            KNeighborsRegressor(n_neighbors=5)
+        ]
+
+    def get_default_models_names():
+        return [
+            'Gradient Boosting 1', 
+            'Gradient Boosting 1', 
+            'Lasso',
+            'Elastic Net', 
+            'Random Forest', 
+            'Extremely Random Forest', 
+            'Huber Rehressor', 
+            'Neural Network',
+            'Support Vector Machine',
+            '5-Nearest-Neighbors'
+        ]
