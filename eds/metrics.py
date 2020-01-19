@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import recall_score
+from sklearn.metrics import precision_score
 from sklearn.metrics import auc
 from sklearn.metrics import roc_curve
 from sklearn.metrics import mean_squared_error
@@ -24,7 +24,7 @@ def false_positive_rate(Y: np.array, Y_hat: np.array) -> float:
     float
         False positive rate
     """
-    return 1 - recall_score(Y, Y_hat)
+    return 1 - precision_score(Y, Y_hat)
 
 
 def false_negative_rate(Y: np.array, Y_hat: np.array) -> float:
@@ -45,7 +45,7 @@ def false_negative_rate(Y: np.array, Y_hat: np.array) -> float:
     float
         False negative rate
     """
-    return 1 - recall_score(1-Y, 1-Y_hat)
+    return 1 - precision_score(1-Y, 1-Y_hat)
 
 
 def avg_error(Y: np.array, Y_hat: np.array) -> float:

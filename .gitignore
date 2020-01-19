@@ -6,3 +6,5 @@ examples/.ipynb_checkpoints/
 .vscode/settings.json
 
 eds/__pycache__/
+
+tests/__pycache__/
