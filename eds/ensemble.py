@@ -12,16 +12,35 @@ class Ensemble(ABC):
 
     @abstractmethod
     def __init__(self, models, names: [str] = None, weights: np.array = None):
+        """[summary]
+        
+        Args:
+            models ([type]): [description]
+            names ([type], optional): [description]. Defaults to None.
+            weights (np.array, optional): [description]. Defaults to None.
+        
+        Returns:
+            [type]: [description]
+        """
         self.models = models
         self.weights = [1/len(self.models)] * len(self.models) if not weights else weights
         self.names = names
 
     @abstractmethod
     def predict(self, x: np.array) -> np.array:
+        """[summary]
+        
+        Args:
+            x (np.array): [description]
+        
+        Returns:
+            np.array: [description]
+        """
         pass
 
     @abstractmethod
     def _get_model_pred(self, model_index: int, X: np.array):
+                
         pass
 
     @staticmethod
@@ -65,7 +84,7 @@ class Ensemble(ABC):
 
     def __get_cv_holdout_results(self, X: np.array, Y: np.array, prob=True, num_splits=10) -> (np.array, np.array):
         cv = StratifiedKFold(n_splits=num_splits, shuffle=True, random_state=1337)
-        results = [ [] for _ in range(len(self.models))]
+        results = [[] for _ in range(len(self.models))]
         Y_holdout_true = []
         for train, test in cv.split(X, Y):
             Y_holdout_true.extend(Y[test])
@@ -77,7 +96,7 @@ class Ensemble(ABC):
 
 class EnsembleClassifier(Ensemble):
 
-    def __init__(self, models, names: [str] = None, weights: np.array = None, 
+    def __init__(self, models, names: [str] = None, weights: np.array = None,
                  metric: Callable[[np.array, np.array], float] = metrics.roc_auc_error):
 
         self.metric = metric
