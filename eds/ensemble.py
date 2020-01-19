@@ -41,14 +41,14 @@ class Ensemble(ABC):
         Fits each of the models in the ensemble to the data.
         This is usually the last step and assumes the weights
         have been optimized already.
-        
+
         Parameters
         ----------
         X : np.array
             Set of feature vectors.
         Y : np.array
             Set of respective outputs of the feature vectors.
-        """        
+        """
         for model in self.models:
             model.fit(X, Y)
 
@@ -56,14 +56,14 @@ class Ensemble(ABC):
         """
         This normalizes the weight vector.
         Specifically used during weight optimization.
-        """        
+        """
         result = norm(self.weights, 1)
         self.weights = self.weights / result if not result == 0.0 else self.weights
 
     def optimize_weights_cv(self, X: np.array, Y: np.array, iterations: int = 1000) -> None:
         """
         Optimizes the weights of the ensemble by using cross-validation.
-        
+
         Parameters
         ----------
         X : np.array
@@ -72,7 +72,7 @@ class Ensemble(ABC):
             Set of respective outputs of the feature vectors.
         iterations : int, optional
             Number of optimization steps, by default 1000
-        """        
+        """
         model_preds, y_holdout_true = self.__get_cv_holdout_results(X, Y)
 
         bounds = [(0.0, 1.0)] * len(self.models)
