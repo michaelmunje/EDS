@@ -1,15 +1,17 @@
 from sklearn.model_selection import cross_validate
 from eds import metrics
 from sklearn.model_selection import cross_val_score
+from sklearn.metrics import make_scorer
 from typing import Callable
 from eds import _default_models
 import numpy as np
 
 
-def evaluate_model_cross_val(model, x: np.array, y: np.array,
-                             metric: Callable[[np.array, np.array], float]) -> np.array:
+def evaluate_model_cross_val(model, x: np.array, y: np.array, loss=True,
+                             metric: Callable[[np.array, np.array], float] = None) -> np.array:
     """
-    Prints out performance evaluation of a model based on default or custom metric.
+    Returns performance evaluation of a model based on default or custom metric.
+    Constructs a 95% confidence interval for an estimation of performance.
 
     Parameters
     ----------
@@ -22,6 +24,9 @@ def evaluate_model_cross_val(model, x: np.array, y: np.array,
     y : np.array
         Respective outputs of feature vectors.
 
+    loss: bool, default True
+        Whether this is a loss function (should be minimized) or opposite.
+
     metric : Callable[[np.array, np.array], float]
         Custom metric to use for evaluating cross-validation performance.
 
@@ -30,9 +35,13 @@ def evaluate_model_cross_val(model, x: np.array, y: np.array,
     np.array
         All scores on holdout sets during cross-validation.
     """
-    scores = cross_val_score(model, x, y, cv=10)
-    print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))  # 95% confidence interval
-    return scores
+    scorer_func = make_scorer(metric, greater_is_better=~loss)
+    scores = cross_val_score(model, x, y, scoring=scorer_func, cv=10)
+    if not loss:
+        scores = scores * -1
+    return {'Avg_Score': scores.mean(),
+            '95_CI_Low': scores.mean() - scores.std() * 2,
+            '95_CI_High': scores.mean() + scores.std() * 2}
 
 
 def evaluate_regressor(y_actual: np.array, y_pred: np.array, metric_func: Callable[[np.array, np.array], float]) -> [float]:
