@@ -37,14 +37,42 @@ class Ensemble(ABC):
         pass
 
     def fit(self, X: np.array, Y: np.array) -> None:
+        """
+        Fits each of the models in the ensemble to the data.
+        This is usually the last step and assumes the weights
+        have been optimized already.
+        
+        Parameters
+        ----------
+        X : np.array
+            Set of feature vectors.
+        Y : np.array
+            Set of respective outputs of the feature vectors.
+        """        
         for model in self.models:
             model.fit(X, Y)
 
     def __normalize_weights(self):
+        """
+        This normalizes the weight vector.
+        Specifically used during weight optimization.
+        """        
         result = norm(self.weights, 1)
         self.weights = self.weights / result if not result == 0.0 else self.weights
 
-    def optimize_weights(self, X: np.array, Y: np.array, iterations: int = 1000) -> None:
+    def optimize_weights_cv(self, X: np.array, Y: np.array, iterations: int = 1000) -> None:
+        """
+        Optimizes the weights of the ensemble by using cross-validation.
+        
+        Parameters
+        ----------
+        X : np.array
+            Set of feature vectors.
+        Y : np.array
+            Set of respective outputs of the feature vectors.
+        iterations : int, optional
+            Number of optimization steps, by default 1000
+        """        
         model_preds, y_holdout_true = self.__get_cv_holdout_results(X, Y)
 
         bounds = [(0.0, 1.0)] * len(self.models)
@@ -55,17 +83,64 @@ class Ensemble(ABC):
         self.__normalize_weights()
 
     def get_model_importances(self):
+        """
+        Returns a list of important models.
+        Importance calculated using the weights.
+        If names were not provided, simply returns the weights.
+
+        Returns
+        -------
+        []
+            Returns a list of important models.
+        """
         if self.names:
             tuples = list(zip(self.names, [round(w, 3) for w in self.weights]))
             return sorted(tuples, key=lambda x: x[1], reverse=True)
-        return sorted(self.weights, reverse=True)
+        return self.weights
 
     def __evaluate_ensemble_weights(self, weights: np.array, model_preds: np.array, y_test: np.array) -> float:
+        """
+        Private method used by optimization process to get performance of the current weight vector.
+
+        Parameters
+        ----------
+        weights : np.array
+            New weights to evaluate on.
+        model_preds : np.array
+            Array of model's predictions for X
+        y_test : np.array
+            True outputs of X
+
+        Returns
+        -------
+        float
+            Performance on metric.
+        """
+        self.weights = weights
         self.__normalize_weights()
-        y_pred = sum(x * y for x, y in zip(model_preds, weights))
+        y_pred = sum(x * y for x, y in zip(model_preds, self.weights))
         return self.metric(y_test, y_pred)
 
-    def __get_cv_holdout_results(self, X: np.array, Y: np.array, prob=True, num_splits=10) -> (np.array, np.array):
+    def __get_cv_holdout_results(self, X: np.array, Y: np.array, num_splits: int = 10) -> (np.array, np.array):
+        """
+        Uses cross-validation to get prediction of each holdout set.
+
+        Parameters
+        ----------
+        X : np.array
+            Set of feature vectors.
+
+        Y: np.array
+            Respective outputs of feature vectors.
+
+        num_splits: int
+            Number of k splits, by default 10
+
+        Returns
+        -------
+        (np.array, np.array)
+            Returns the set of holdout predictions of each model, and the true outputs
+        """
         cv = StratifiedKFold(n_splits=num_splits, shuffle=True, random_state=1337)
         results = [[] for _ in range(len(self.models))]
         Y_holdout_true = []
