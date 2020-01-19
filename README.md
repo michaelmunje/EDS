@@ -1,5 +1,10 @@
-## Data Science Utilities
+EDS
+======
 
-Contains utilities for data science and machine learning 
+EDS: **E**nhanced **D**ata **S**cience is an open-source toolbox for data science.
 
-See examples for use cases.
+Documentation
+-------------
+
+The documentation for ``eds`` will be available soon.
+
