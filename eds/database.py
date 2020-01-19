@@ -1,11 +1,11 @@
 import pandas as pd
 import sqlite3
 
+
 class Database:
-    def __init__(self, db_loc: str) -> Database:
+    def __init__(self, db_loc: str) -> sqlite3.Database:
         self.connection = sqlite3.connect(db_loc)
         self.cursor = self.connection.cursor()
-
 
     def execute_command(self, statement: str) -> None:
         '''
@@ -16,7 +16,6 @@ class Database:
         except sqlite3.Error as e:
             print(e)
 
-
     def fetch_table_names(self) -> [str]:
         '''
         Retrieves all tables in the database
@@ -24,14 +23,12 @@ class Database:
         self.execute_command('SELECT name FROM sqlite_master WHERE type = \'table\';')
         return [x[0] for x in self.cursor.fetchall()]
 
-
     def fetch_column_names(self, table: str) -> [str]:
         '''
         Retrieves all columns in a table
         '''
         self.execute_command('PRAGMA table_info(' + table + ');')
         return [x[1] for x in self.cursor.fetchall()]
-
 
     def fetch_col_values(self, table: str, col: str) -> []:
         '''
