@@ -13,6 +13,16 @@ from sklearn.pipeline import make_pipeline
 
 
 def get_default_classfiers():
+    """
+    Gets a list of classifiers that generally perform decently.
+    Note: For the ensemble class, adding more classifiers
+    introduces more complexity.
+
+    Returns
+    -------
+    []
+        List of default classifiers.
+    """
     return [
         KNeighborsClassifier(3),
         KNeighborsClassifier(7),
@@ -28,6 +38,15 @@ def get_default_classfiers():
 
 
 def get_default_classifiers_names():
+    """
+    Gets a list of the classifiers names from the above classifiers.
+    Will be combined with above function in future releases.
+
+    Returns
+    -------
+    []
+        List of default classifiers' names.
+    """
     return [
         '3-Nearest Neighbors',
         '7-NearestNeighbors',
@@ -42,6 +61,16 @@ def get_default_classifiers_names():
 
 
 def get_default_regressors():
+    """
+    Gets a list of regressors that generally perform decently.
+    Note: For the ensemble class, adding more regressors
+    introduces more complexity.
+
+    Returns
+    -------
+    []
+        List of default regressors.
+    """
     return [
         ensemble.GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
                                            max_depth=4, max_features='sqrt',
@@ -64,6 +93,15 @@ def get_default_regressors():
 
 
 def get_default_regressors_names():
+    """
+    Gets a list of the regressors names from the above regressors.
+    Will be combined with above function in future releases.
+
+    Returns
+    -------
+    []
+        List of default regressors' names.
+    """
     return [
         'Gradient Boosting 1',
         'Gradient Boosting 2',

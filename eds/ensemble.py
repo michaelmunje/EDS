@@ -46,6 +46,7 @@ class Ensemble(ABC):
         ----------
         X : np.array
             Set of feature vectors.
+
         Y : np.array
             Set of respective outputs of the feature vectors.
         """
@@ -61,6 +62,7 @@ class Ensemble(ABC):
         ----------
         X : np.array
             Set of feature vectors.
+
         Y : np.array
             Set of respective outputs of the feature vectors.
         """
@@ -83,8 +85,10 @@ class Ensemble(ABC):
         ----------
         X : np.array
             Set of feature vectors.
+
         Y : np.array
             Set of respective outputs of the feature vectors.
+
         iterations : int, optional
             Number of optimization steps, by default 1000
         """
@@ -121,8 +125,10 @@ class Ensemble(ABC):
         ----------
         weights : np.array
             New weights to evaluate on.
+
         model_preds : np.array
             Array of model's predictions for X
+            
         y_test : np.array
             True outputs of X
 
