@@ -3,6 +3,7 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import auc
 from sklearn.metrics import roc_curve
 from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
 
 
 def false_positive_rate(Y: np.array, Y_hat: np.array) -> np.array:
@@ -25,3 +26,7 @@ def roc_auc_error(Y, Y_hat):
 
 def mse(Y, Y_hat):
     return mean_squared_error(Y, Y_hat)
+
+
+def r2(Y, Y_hat):
+    return r2_score(Y, Y_hat)
