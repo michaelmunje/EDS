@@ -21,9 +21,7 @@ script:
   - pip install matplotlib
   - pip uninstall -y keras-preprocessing
   - pip install git+https://github.com/keras-team/keras-preprocessing.git
+  - conda install -y --quiet --yes seaborn scikit-learn
   - python -m pytest --cov=eds/ -W ignore::DeprecationWarning
-  - cd docs
-  - make html
-  - cd ..
 after_success:
   - coveralls
