@@ -12,35 +12,12 @@ class Ensemble(ABC):
 
     @abstractmethod
     def __init__(self, models, names: [str] = None, weights: np.array = None):
-        """[summary]
-        
-        Args:
-            models ([type]): [description]
-            names ([type], optional): [description]. Defaults to None.
-            weights (np.array, optional): [description]. Defaults to None.
-        
-        Returns:
-            [type]: [description]
-        """
         self.models = models
         self.weights = [1/len(self.models)] * len(self.models) if not weights else weights
         self.names = names
 
     @abstractmethod
-    def predict(self, x: np.array) -> np.array:
-        """[summary]
-        
-        Args:
-            x (np.array): [description]
-        
-        Returns:
-            np.array: [description]
-        """
-        pass
-
-    @abstractmethod
     def _get_model_pred(self, model_index: int, X: np.array):
-                
         pass
 
     @staticmethod
@@ -51,6 +28,10 @@ class Ensemble(ABC):
     @staticmethod
     @abstractmethod
     def get_default_models_names():
+        pass
+
+    @abstractmethod
+    def predict(self, x: np.array) -> np.array:
         pass
 
     def fit(self, X: np.array, Y: np.array) -> None:
@@ -102,13 +83,15 @@ class EnsembleClassifier(Ensemble):
         self.metric = metric
         super().__init__(models, names, weights)
 
-    def predict(self, x: np.array, prob=False) -> np.array:
-        model_preds = [model.predict(x) if not prob else model.predict_proba(x) for model in self.models]
+    def predict(self, x: np.array) -> np.array:
+        model_preds = [model.predict(x) for model in self.models]
         preds = sum(x * y for x, y in zip(model_preds, self.weights))
-        return np.array(preds) if prob else np.array([1 if pred >= 0.5 else 0 for pred in preds])
+        return np.array([1 if pred >= 0.5 else 0 for pred in preds])
 
     def predict_proba(self, x: np.array) -> np.array:
-        return self.predict(x, prob=True)
+        model_preds = [model.predict_proba(x) for model in self.models]
+        preds = sum(x * y for x, y in zip(model_preds, self.weights))
+        return np.array(preds)
 
     def _get_model_pred(self, model_index: int, x: np.array) -> np.array:
         return self.models[model_index].predict_proba(x)[:, 1]
@@ -133,7 +116,7 @@ class EnsembleRegressor(Ensemble):
     def predict(self, x: np.array) -> np.array:
         model_preds = [model.predict(x) for model in self.models]
         preds = sum(x * y for x, y in zip(model_preds, self.weights))
-        return np.array([1 if pred >= 0.5 else 0 for pred in preds])
+        return np.array(preds)
 
     def _get_model_pred(self, model_index: int, X: np.array) -> np.array:
         return self.models[model_index].predict(X)
