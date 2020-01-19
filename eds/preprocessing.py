@@ -10,14 +10,33 @@ import pandas as pd
 import numpy as np
 
 
-def rank_features(X, Y, classify=True, plot=False, columns=None):
+def rank_features(X: np.array, Y: np.array, classify: bool = True,
+                  plot: bool = False, columns: [str] = None):
+    """
+    Ranks and prints the importance of features according to a random forest model.
 
+    Parameters
+    ----------
+    X : np.array
+        Set of feature vectors.
+
+    Y : np.array
+        Respective outputs of feature vectors.
+
+    classify : bool, optional
+        Whether a classification model should be used, by default True
+
+    plot : bool, optional
+        Whether to plot the results, by default False
+
+    columns : [str], optional
+        Names of the features, by default None
+
+    """
     if classify:
-        forest = ensemble.ExtraTreesClassifier(n_estimators=250,
-                                    random_state=1337)
+        forest = ensemble.ExtraTreesClassifier(n_estimators=250, random_state=1337)
     else:
-        forest = ensemble.ExtraTreesRegressor(n_estimators=250,
-                            random_state=1337)
+        forest = ensemble.ExtraTreesRegressor(n_estimators=250, random_state=1337)
 
     forest.fit(X, Y)
     importances = forest.feature_importances_
@@ -29,15 +48,16 @@ def rank_features(X, Y, classify=True, plot=False, columns=None):
     if columns is None:
         for i in range(X.shape[1]):
             print(f"Feature {indices[i]}\t : {round(importances[indices[i]], 2)}")
+        columns = indices
     else:
         for i in range(X.shape[1]):
             print(f"{columns[indices[i]]}\t : {round(importances[indices[i]], 2)}")
 
+    # Note: Remove later, this should be used in visualize.
     if plot:
         plt.figure()
         plt.title("Feature importances")
         plt.bar(range(X.shape[1]), importances[indices], color="b", yerr=std[indices], align="center")
-        labels = indices if columns is None else columns
         plt.xticks(range(X.shape[1]), [columns[indices[i]] for i in range(X.shape[1])])
         plt.xlim([-1, X.shape[1]])
         fig = plt.gcf()
@@ -49,11 +69,22 @@ def adjust_skewness(df: pd.DataFrame, specific: str = None) -> pd.DataFrame:
     """
     Adjusts the skewness of all columns by finding highly skewed columns
     and performing a boxcox transformation
-    :param df: pandas DataFrame to adjust skewed columns in
-    :return: pandas DataFrame with skew adjusted columns
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame to adjust skewed columns in
+
+    specific : str, optional
+        Specfic feature to skew, by default None
+
+    Returns
+    -------
+    pd.DataFrame
+        Returns the pandas DataFrame with corrected columns where skewness was high.
     """
 
-    numerics = list(x[0] for x in (filter(lambda x: x[1].name != 'object' and x[1].name != 'category', zip(df.columns, df.dtypes))))
+    numerics = [x[0] for x in (filter(lambda x: x[1].name != 'object' and x[1].name != 'category', zip(df.columns, df.dtypes)))]
     skewed_feats = df[numerics].apply(lambda x: skew(x.dropna())).sort_values(ascending=False)
     skewness = pd.DataFrame({'Skew': skewed_feats})
     skewness = skewness[abs(skewness) > 0.7]
@@ -73,13 +104,23 @@ def adjust_skewness(df: pd.DataFrame, specific: str = None) -> pd.DataFrame:
 def get_nan_col_proportions(df: pd.DataFrame, lowest_proportion: float = 0.0) -> [(str, float)]:
     """
     Prints out all columns with NaN values that exceed a specific proportion (default 0.0)
-    :param df: pandas DataFrame to look into.
-    :param lowest_proportion: float that is the lowest proportions that we print.
-    :return: None
+
+    Parameters
+    -------
+    df: pd.DataFrame
+        Input DataFrame to check column NaN rates.
+
+    lowest_proportion: float
+        Threshold for unacceptable NaN rate.
+
+    Returns
+    -------
+    [(str, float)]
+        List of tuples that contain the string of the column name and its NaN rate.
     """
 
     values = list(zip(list(df.isnull().columns), list(df.isnull().any())))
-    filtered = list(filter(lambda x: x[1][1] == True, enumerate(values)))
+    filtered = list(filter(lambda x: x[1][1] == True, enumerate(values)))  # May just return x[1][1]
     contains_nan = [y for x, y in filtered]
     proportion_nan = [round(sum(df[x].isnull()) / len(df[x]), 3) for x, y in contains_nan]
     proportion_nan = [(x[0], proportion_nan[i]) for i, x in enumerate(contains_nan)]
@@ -92,10 +133,20 @@ def get_nan_col_proportions(df: pd.DataFrame, lowest_proportion: float = 0.0) ->
 
 def remove_nan_cols(df: pd.DataFrame, prop_threshold: float = 0.0) -> pd.DataFrame:
     """
-    Prints out all columns with NaN values that exceed a specific proportion (default 0.0)
-    :param df: pandas DataFrame to look into.
-    :param prop_threshold: float that is the lowest proportion that we delete
-    :return: pandas DataFrame with removed nans
+    Removes columns from a DataFrame that have an unacceptable NaN rate.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame to check column NaN rates.
+
+    prop_threshold : float, optional
+        Threshold for unacceptable NaN rate, by default 0.0
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame that removed the unacceptable NaN columns.
     """
 
     nan_props = get_nan_col_proportions(df, prop_threshold)
@@ -107,9 +158,18 @@ def remove_nan_cols(df: pd.DataFrame, prop_threshold: float = 0.0) -> pd.DataFra
 def print_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderate_value: float = 0.4) -> None:
     """
     Prints out all correlations deemed as moderate (0.4, or set by parameter).
-    :param df: pandas DataFrame to look into.
-    :param col_to_correlate: String that represents column we want to check correlations with.
-    :param moderate_value: Which correlation value we deem as moderate (default 0.4).
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        pandas DataFrame to check correlations from.
+
+    col_to_correlate : str
+        String that represents column we want to check correlations with.
+
+    moderate_value : float, optional
+        Which correlation value we deem as moderate (default 0.4)., by default 0.4
+
     """
 
     if df[col_to_correlate].dtype.name == 'category':
@@ -122,35 +182,56 @@ def print_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderat
             print(col, ' : ', round(corr_value, 2))
 
 
-def remove_weak_correlations(df1: pd.DataFrame, df2, y, weak_threshold: float = 0.1) -> (pd.DataFrame, pd.DataFrame):
+def remove_weak_correlations(df: pd.DataFrame, target_col: str, weak_threshold: float = 0.1) -> pd.DataFrame:
     """
-    Removes weak correlations
-    :param df: pandas DataFrame to remove columns from.
-    :param col_to_correlate: String column name to check correlation with
-    :param weak_threshold: float number that counts as an absolute weak threshold
-    :return: pandas DataFrame without the columns weakly correlated to target
+    [summary]
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input DataFrame to which remove weak correlations from.
+
+    target_col : str
+        Target column to check correlations with.
+
+    weak_threshold : float, optional
+        Threshold to consider a weak correlation, by default 0.1
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame without weak correlations.
     """
+
     col_to_correlate = 'PREDICTOR_TO_CHECK_WEAK_CORRS'
-    df1[col_to_correlate] = y
-    cols = df1[df1.columns].corr().columns
-    corrs = df1[df1.columns].corr()[col_to_correlate]
+    df[col_to_correlate] = target_col
+    cols = df[df.columns].corr().columns
+    corrs = df[df.columns].corr()[col_to_correlate]
     strongly_correlated = list()
     for col, corr in zip(cols, corrs):
         if abs(corr) >= weak_threshold and col != col_to_correlate:
             strongly_correlated.append(col)
-    df1 = df1.drop(columns=[col_to_correlate])
-    for col in df1.columns:
+    df = df.drop(columns=[col_to_correlate])
+    for col in df.columns:
         if col not in strongly_correlated:
-            df1.drop(columns=[col], inplace=True)
-            df2.drop(columns=[col], inplace=True)
-    return df1, df2
-              
+            df.drop(columns=[col], inplace=True)
+    return df
+
 
 def remove_constant_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Removes all redundant columns which have the same value across the column
-    :param df: pandas DataFrame to remove redundant columns from
-    :return: pandas DataFrame without redundant columns
+    Removes redundant constant columns from a dataframe.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame to return without constant columns.
+
+    Returns
+    -------
+    pd.DataFrame
+        Input DataFrame without constant columns.
+
     """
 
     return df.loc[:, df.apply(pd.Series.nunique) != 1]
@@ -160,8 +241,16 @@ def convert_categorical_to_numbers(to_change_df: pd.DataFrame) -> pd.DataFrame:
     """
     Dummifies all category data including objects.
     Assumes the data has been cleaned and the dtypes are consistent.
-    :param to_change_df: pandas DataFrame to convert to all numerical
-    :return: Dummified input pandas DataFrame
+
+    Parameters
+    ----------
+    to_change_df : pd.DataFrame
+        pandas DataFrame to convert to all numerical
+
+    Returns
+    -------
+    pd.DataFrame
+        Dummified input pandas DataFrame
     """
     return pd.get_dummies(convert_objects_to_categories(to_change_df))
 
@@ -169,8 +258,16 @@ def convert_categorical_to_numbers(to_change_df: pd.DataFrame) -> pd.DataFrame:
 def convert_objects_to_categories(to_change_df: pd.DataFrame) -> pd.DataFrame:
     """
     Converts all object dtypes into categories
-    :param to_change_df: pandas DataFrame to convert objects to categories
-    :return: pandas DataFrame with categories instead of objects
+
+    Parameters
+    ----------
+    to_change_df : pd.DataFrame
+        DataFrame to convert objects to categories
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with categories instead of objects
     """
 
     for col, dtype in zip(to_change_df.columns, to_change_df.dtypes):
@@ -182,9 +279,20 @@ def convert_objects_to_categories(to_change_df: pd.DataFrame) -> pd.DataFrame:
 def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> None:
     """
     Replace the missing values in the given column using machine learning predictions
-    :param df: pandas DataFrame to use as features (and predictor column)
-    :param col_to_predict: string that represents the predictor column
-    :return: pandas DataFrame with filled predictor column values via machine learning
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame to use as features (and predictor column)
+
+    col_to_predict : str
+        string that represents the predictor column
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with filled predictor column values via machine learning
+
     """
 
     y = df[col_to_predict].values
@@ -213,14 +321,14 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> None:
 
     if df[col_to_predict].dtype.name == 'object':
         rf = ensemble.GradientBoostingClassifier(n_estimators=3000, learning_rate=0.05,
-                                        max_depth=4, max_features='sqrt',
-                                        min_samples_leaf=15, min_samples_split=10)
+                                                 max_depth=4, max_features='sqrt',
+                                                 min_samples_leaf=15, min_samples_split=10)
     else:
         is_classify = False
         rf = ensemble.GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
-                                       max_depth=4, max_features='sqrt',
-                                       min_samples_leaf=15, min_samples_split=10,
-                                       loss='huber')
+                                                max_depth=4, max_features='sqrt',
+                                                min_samples_leaf=15, min_samples_split=10,
+                                                loss='huber')
 
     rf.fit(x_train, y_train)
 
@@ -240,13 +348,23 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> None:
     df.loc[df[col_to_predict].isnull(), col_to_predict] = rf.predict(df_to_predict.values)
 
 
-def apply_scale(x_train: np.array, x_test: np.array, scale_type: str = 'Standard') -> (np.array, np.array):
+def apply_scale(x: np.array, scale_type: str = 'Standard') -> np.array:
     """
     Scales the data according to the distribution of x_train
-    :param x_train: numpy.array to scale via its distribution
-    :param x_test: numpy.array to scale according to x_test's distribution
-    :param scale_type: Which scaling type to use. Options: 'Standard', 'Robust', 'MinMax'. Default = 'Standard'
-    :return: x_train and x_test properly scaled.
+
+    Parameters
+    ----------
+    x : np.array
+        numpy.array to scale via its distribution
+
+    scale_type : str, optional
+        Which scaling type to use. Options: 'Standard', 'Robust', 'MinMax'. Default = 'Standard'
+
+    Returns
+    -------
+    np.array
+        x properly scaled.
+
     """
 
     if scale_type == 'Standard':
@@ -258,19 +376,28 @@ def apply_scale(x_train: np.array, x_test: np.array, scale_type: str = 'Standard
     else:
         raise Exception('Invalid string input for scale_type')
 
-    scaler.fit(x_train) # Correct to use only the training data to not bias our model's test evaluation 
-    return scaler.transform(x_train), scaler.transform(x_test)
+    scaler.fit(x)  # Correct to use only the training data to not bias our model's test evaluation
+    return scaler.transform(x)
 
 
-def apply_pca(x_train: np.array, x_test: np.array, n_comps: float = 0.975) -> (np.array, np.array):
+def apply_pca(x: np.array, n_comps: float = 0.975) -> np.array:
     """
     Apply PCA to the data according to the distribution of x_train
-    :param x_train: numpy.array to scale via its distribution
-    :param x_test: numpy.array to scale according to x_test's distribution
-    :param n_comps: Either the number of principal components, or the variance to be kept in the components.
-    :return: x_train and x_test with PCA applied.
+
+    Parameters
+    ----------
+    x : np.array
+        numpy.array to scale via its distribution
+
+    n_comps : float, optional
+        Either the number of principal components, or the variance to be kept in the components., by default 0.975
+
+    Returns
+    -------
+    np.array
+        X set of feature vectors with PCA applied.
     """
 
     pca = decomposition.PCA(n_components=n_comps)
-    pca.fit(x_train) # Correct to use only the training data to not bias our model's test evaluation
-    return pca.transform(x_train), pca.transform(x_test)
+    pca.fit(x)  # Correct to use only the training data to not bias our model's test evaluation
+    return pca.transform(x)
