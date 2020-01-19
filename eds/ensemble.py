@@ -52,6 +52,21 @@ class Ensemble(ABC):
         for model in self.models:
             model.fit(X, Y)
 
+    def optimal_fit_cv(self, X: np.array, Y: np.array) -> None:
+        """
+        Optimizes the weights of the vector using cross-validation,
+        then fits to all of the data.
+
+        Parameters
+        ----------
+        X : np.array
+            Set of feature vectors.
+        Y : np.array
+            Set of respective outputs of the feature vectors.
+        """
+        self.optimize_weights_cv(X, Y)
+        self.fit(X, Y)
+
     def __normalize_weights(self):
         """
         This normalizes the weight vector.
