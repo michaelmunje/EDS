@@ -1,8 +1,8 @@
 from sklearn.model_selection import cross_validate
-import metrics
+from eds import metrics
 from sklearn.model_selection import cross_val_score
 from typing import Callable
-import _default_models
+from eds import _default_models
 import numpy as np
 
 

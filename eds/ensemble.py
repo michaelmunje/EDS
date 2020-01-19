@@ -1,7 +1,7 @@
 from sklearn.model_selection import StratifiedKFold
 from scipy.optimize import differential_evolution
-import metrics
-import _default_models
+from eds import metrics
+from eds import _default_models
 from typing import Callable
 import numpy as np
 from numpy.linalg import norm
