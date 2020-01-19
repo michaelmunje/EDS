@@ -72,6 +72,11 @@ def get_default_regressors():
         List of default regressors.
     """
     return [
+        make_pipeline(preprocessing.RobustScaler(), linear_model.Lasso(alpha=0.0005, random_state=42)),
+        make_pipeline(preprocessing.RobustScaler(), linear_model.ElasticNet(alpha=0.0005, l1_ratio=.9,
+                                                                            max_iter=10000, random_state=42)),
+        ensemble.RandomForestRegressor(n_estimators=200, min_samples_leaf=3, random_state=42),
+        ensemble.ExtraTreesRegressor(n_estimators=200, min_samples_leaf=3, random_state=42),
         ensemble.GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
                                            max_depth=4, max_features='sqrt',
                                            min_samples_leaf=15, min_samples_split=10,
@@ -80,11 +85,6 @@ def get_default_regressors():
                                            min_impurity_split=None, min_samples_leaf=15,
                                            min_samples_split=10, n_estimators=12000,
                                            random_state=42),
-        make_pipeline(preprocessing.RobustScaler(), linear_model.Lasso(alpha=0.0005, random_state=42)),
-        make_pipeline(preprocessing.RobustScaler(), linear_model.ElasticNet(alpha=0.0005, l1_ratio=.9,
-                                                                            max_iter=10000, random_state=42)),
-        ensemble.RandomForestRegressor(n_estimators=200, min_samples_leaf=3, random_state=42),
-        ensemble.ExtraTreesRegressor(n_estimators=200, min_samples_leaf=3, random_state=42),
         linear_model.HuberRegressor(),
         linear_model.LinearRegression(),
         svm.SVR(kernel='poly', gamma='auto'),
@@ -103,12 +103,12 @@ def get_default_regressors_names():
         List of default regressors' names.
     """
     return [
-        'Gradient Boosting 1',
-        'Gradient Boosting 2',
         'Lasso',
         'Elastic Net',
         'Random Forest',
         'Extremely Random Forest',
+        'Gradient Boosting 1',
+        'Gradient Boosting 2',
         'Huber Rehressor',
         'Support Vector Machine',
         '5-Nearest-Neighbors'
