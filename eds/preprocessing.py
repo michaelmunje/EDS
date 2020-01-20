@@ -128,7 +128,7 @@ def get_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderate_
     corrs_value = corrs[col_to_correlate]
     for col, corr_value in zip(cols, corrs_value):
         if abs(corr_value) > moderate_value and col != col_to_correlate:
-            result.append({'Column_Name': col, 'Correlation:': round(corr_value, 2))
+            result.append({'Column_Name': col, 'Correlation:': round(corr_value, 2)})
     return result
 
 
