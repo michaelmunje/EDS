@@ -7,8 +7,9 @@ from eds import _default_models
 import numpy as np
 
 
-def evaluate_model_cross_val(model, x: np.array, y: np.array, loss=True,
-                             metric: Callable[[np.array, np.array], float] = None) -> np.array:
+def get_cross_val_ci(model, x: np.array, y: np.array, loss=True,
+                     metric: Callable[[np.array, np.array], float] = None,
+                     folds=5) -> dict:
     """
     Returns performance evaluation of a model based on default or custom metric.
     Constructs a 95% confidence interval for an estimation of performance.
@@ -30,25 +31,30 @@ def evaluate_model_cross_val(model, x: np.array, y: np.array, loss=True,
     metric : Callable[[np.array, np.array], float]
         Custom metric to use for evaluating cross-validation performance.
 
+    folds: int
+        Number of cross-validation folds.
+
     Returns
     -------
     np.array
-        All scores on holdout sets during cross-validation.
+        Dictionary containing performance information.
     """
     scorer_func = make_scorer(metric, greater_is_better=~loss)
-    scores = cross_val_score(model, x, y, scoring=scorer_func, cv=10)
+    scores = cross_val_score(model, x, y, scoring=scorer_func, cv=folds)
     if not loss:
         scores = scores * -1
+
     return {'Avg_Score': scores.mean(),
             '95_CI_Low': scores.mean() - scores.std() * 2,
-            '95_CI_High': scores.mean() + scores.std() * 2}
+            '95_CI_High': scores.mean() + scores.std() * 2
+            }
 
 
-def evaluate_regressor(y_actual: np.array, y_pred: np.array, metric_func: Callable[[np.array, np.array], float]) -> [float]:
+def evaluate_regressor(y_actual: np.array, y_pred: np.array) -> dict:
     """
     Evaluates a regression model's set of predictions.
     Prints out several performance scores.
-    Returns list containing all performances.
+    Returns dictionary containing performance information.
 
     Parameters
     ----------
@@ -58,35 +64,27 @@ def evaluate_regressor(y_actual: np.array, y_pred: np.array, metric_func: Callab
     y_pred : np.array
         Predicted labels of feature vectors.
 
-    metric_func : Callable[[np.array, np.array], float]
-        Custom performance metric to use, by default None.
-
     Returns
     -------
-    [float]
-        List of performance scores.
+    dict
+        Performance information for each main metric.
     """
-    r2 = metrics.r2(y_actual, y_pred)
+    r2 = 1 - metrics.r2_error(y_actual, y_pred)
     mse = metrics.mse(y_actual, y_pred)
     rmse = mse ** (1 / 2)
-    all_metrics = [r2, mse, rmse]
 
-    print('R2\t: ', round(r2, 4))
-    print('MSE\t: ', round(mse, 4))
-    print('RMSE\t: ', round(rmse, 4))
-
-    if metric_func:
-        custom_metric = metric_func(y_actual, y_pred)
-        all_metrics.append(custom_metric)
-        print('CUSTOM METRIC\t: ', round(custom_metric, 4))
-
-    return all_metrics
+    return {
+        'R2': round(r2, 4),
+        'MSE': round(mse, 4),
+        'RMSE': round(rmse, 4)
+    }
 
 
-def try_many_regressors(x: np.array, y: np.array, metric: Callable[[np.array, np.array], float] = metrics.mse,
-                        metric_max_better: bool = True) -> None:
+def try_many_regressors(x: np.array, y: np.array, loss=True, folds=5,
+                        metric: Callable[[np.array, np.array], float] = metrics.mse) -> dict:
     """
-    Tries a set of different regression models and reports on the best performing model.
+    Tries a set of different regression models and returns
+    report on the model's performances.
 
     Parameters
     ----------
@@ -96,24 +94,69 @@ def try_many_regressors(x: np.array, y: np.array, metric: Callable[[np.array, np
     y : np.array
         Respective outputs of feature vectors.
 
-    metric : Callable[[np.array, np.array], float]
+    loss : bool, optional, by default True
+        Whether the metric is a loss function. (Smaller means better)
+
+    folds : int, optional, by default 5
+        Number of folds for cross-validation
+
+    metric : Callable[[np.array, np.array], float], optional, by default metrics.mse
         Custom metric to minimize, by default mean squared error.
-        A wrapper function can multiply a function to maximize by -1 to minimize instead.
 
     Returns
     -------
-        Returns the best performing fitted model.
+    dict
+        Dictionary containing result information including a 
+        confidence interval of the model's score as well as the
+        unfitted model.
     """
     def first(s):
         return s[0] if len(s) > 1 else s
+
     regressors = _default_models.get_default_regressors()
 
-    scores = np.zeros(len(regressors))
+    scores = [{} for _ in range(len(regressors))]
+    scorer_func = make_scorer(metric, greater_is_better=~loss)
 
-    for i, r in enumerate(regressors):
-        print('Running k-fold cross validation for', r.__class__.__name__)
-        scores[i] = cross_validate(r, x, y, metric)
+    for i, model in enumerate(regressors):
+        print('Running k-fold cross validation for', model.__class__.__name__)
+        scores[i]['model_name'] = model.__class__.__name__
+        scores[i]['model'] = model
+        current_scores = cross_validate(model, x, y, scoring=scorer_func, cv=folds)['test_score']
+        scores[i]['mean_score'] = current_scores.mean()
+        scores[i]['score_95_CI_Low'] = current_scores.mean() - (current_scores.std() * 2)
+        scores[i]['score_95_CI_High'] = current_scores.mean() + (current_scores.std() * 2)
 
-    print('Best performing model: ', regressors[first(np.argmin(scores))].__class__.__name__)
-    print('Best', metric.__name__, ':', np.amin(scores))
-    return regressors[first(np.argmin(scores))]
+    return scores
+
+
+def get_best_regressor(x: np.array, y: np.array, loss=True, folds=5,
+                       metric: Callable[[np.array, np.array], float] = metrics.mse):
+    """
+    Tries a suite of different regressors and returns the best performing one.
+
+    Parameters
+    ----------
+    x : np.array
+        Set of feature vectors.
+
+    y : np.array
+        Respective outputs of feature vectors.
+
+    loss : bool, optional, by default True
+        Whether the metric is a loss function. (Smaller means better)
+
+    folds : int, optional, by default 5
+        Number of folds for cross-validation
+
+    metric : Callable[[np.array, np.array], float], optional, by default metrics.mse
+        Custom metric to minimize, by default mean squared error.
+
+    Returns
+    -------
+    model
+        Sklearn like model that performed best compared to a wide selection of models.
+    """
+    results = try_many_regressors(x, y, loss, metric)
+    scores = [res['mean_score'] for res in results]
+    return results[np.argmin(scores)]['model']
