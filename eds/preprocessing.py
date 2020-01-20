@@ -300,7 +300,7 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> (pd.DataFr
 
 def apply_scale(x: np.array, scale_type: str = 'Standard') -> np.array:
     """
-    Scales the data according to the distribution of x_train
+    Scales the data according to the distribution of x
 
     Parameters
     ----------
@@ -315,6 +315,23 @@ def apply_scale(x: np.array, scale_type: str = 'Standard') -> np.array:
     np.array
         x properly scaled.
 
+    By default, the scale will standardize the feature vectors.
+    >>> apply_scale([[-100, 10], [-90, 15], [-10, 20]])
+    array([[-0.82760589, -1.22474487],
+           [-0.57932412,  0.        ],
+           [ 1.40693001,  1.22474487]])
+
+    There is also a robust scaling option.
+    >>> apply_scale([[100, 10], [0, 15], [5, 20]], scale_type='Robust')
+    array([[ 1.9, -1. ],
+           [-0.1,  0. ],
+           [ 0. ,  1. ]])
+
+    You can also apply a MinMax scales which scales to 0 to 1.
+    >>> apply_scale([[-100, 10], [-90, 15], [-10, 20]], scale_type='MinMax')
+    array([[0.        , 0.        ],
+           [0.11111111, 0.5       ],
+           [1.        , 1.        ]])
     """
 
     if scale_type == 'Standard':
@@ -346,6 +363,12 @@ def apply_pca(x: np.array, n_comps: float = 0.975) -> np.array:
     -------
     np.array
         X set of feature vectors with PCA applied.
+
+    Performs PCA on X feature matrix
+    >>> apply_pca([[100, 200], [100, 100], [100, 0]])
+    array([[ 100.],
+           [   0.],
+           [-100.]])
     """
 
     pca = decomposition.PCA(n_components=n_comps)
