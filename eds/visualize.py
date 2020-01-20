@@ -2,6 +2,39 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import pandas as pd
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.model_selection import StratifiedKFold
+
+
+def plot_feature_importances(X, y, classify=True):
+
+    cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=1337)
+
+    if classify:
+        rf = ExtraTreesClassifier(n_estimators=100, min_samples_leaf=3, random_state=1337)
+    else:
+        rf = ExtraTreesRegressor(n_estimators=100, min_samples_leaf=3, random_state=1337)
+
+    importance_trees = []
+
+    for i, (train, test) in enumerate(cv.split(X, y)):
+        rf.fit(X[train], y[train])
+        importance_trees.extend([list(tree.feature_importances_) for tree in rf.estimators_])
+
+    importances = np.mean(importance_trees, axis=0)
+    std = np.std(importance_trees, axis=0)
+    importances, columns, std = zip(*(sorted(zip(importances, df.columns[:-1], std), key=lambda x: x[0])[::-1]))
+
+    plt.figure()
+    plt.title("Feature importances", fontsize=20)
+    plt.bar(range(X.shape[1]), importances, color="b", yerr=std, align="center")
+    plt.xticks(range(X.shape[1]), [columns[i] for i in range(X.shape[1])])
+    plt.xlim([-1, X.shape[1]])
+    plt.ylabel('Importance', fontsize=20)
+    fig = plt.gcf()
+    fig.set_size_inches(16, 8)
+    plt.show()
 
 
 def plot_hist_distribution(df: pd.Series, col: str) -> None:
