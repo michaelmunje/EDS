@@ -16,12 +16,12 @@ script:
   - source activate eds-env
   - conda install -y --quiet --yes numpy pandas tensorflow pytest pytest-cov keras pillow
   - conda clean -tipsy
-  - pip install coveralls
+  - pip install coveralls doctest autodoc
   - pip install sphinx
   - pip install matplotlib
   - pip uninstall -y keras-preprocessing
   - pip install git+https://github.com/keras-team/keras-preprocessing.git
   - conda install -y --quiet --yes seaborn scikit-learn
-  - python -m pytest --cov=eds/ -W ignore::DeprecationWarning
+  - python -m pytest --cov=eds/ -W ignore::DeprecationWarning --doctest-modules
 after_success:
   - coveralls
