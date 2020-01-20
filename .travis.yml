@@ -18,6 +18,7 @@ script:
   - conda clean -tipsy
   - pip install coveralls doctest autodoc
   - pip install sphinx
+  - pip install sphinx-rtd-theme
   - pip install matplotlib
   - pip uninstall -y keras-preprocessing
   - pip install git+https://github.com/keras-team/keras-preprocessing.git
