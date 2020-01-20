@@ -16,7 +16,8 @@ script:
   - source activate eds-env
   - conda install -y --quiet --yes numpy pandas tensorflow pytest pytest-cov keras pillow
   - conda clean -tipsy
-  - pip install coveralls doctest autodoc
+  - pip install coveralls autodoc
+  - conda install doctest
   - pip install sphinx
   - pip install sphinx-rtd-theme
   - pip install matplotlib
