@@ -23,6 +23,11 @@ def false_positive_rate(Y: np.array, Y_hat: np.array) -> float:
     -------
     float
         False positive rate
+
+    >>> y_true = [1, 0]
+    >>> y_pred = [1, 1]
+    >>> false_positive_rate(np.array(y_true), np.array(y_pred))
+    0.5
     """
     return 1 - precision_score(Y, Y_hat)
 
