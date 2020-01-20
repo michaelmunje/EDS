@@ -10,61 +10,6 @@ import pandas as pd
 import numpy as np
 
 
-def rank_features(X: np.array, Y: np.array, classify: bool = True,
-                  plot: bool = False, columns: [str] = None):
-    """
-    Ranks and prints the importance of features according to a random forest model.
-
-    Parameters
-    ----------
-    X : np.array
-        Set of feature vectors.
-
-    Y : np.array
-        Respective outputs of feature vectors.
-
-    classify : bool, optional
-        Whether a classification model should be used, by default True
-
-    plot : bool, optional
-        Whether to plot the results, by default False
-
-    columns : [str], optional
-        Names of the features, by default None
-
-    """
-    if classify:
-        forest = ensemble.ExtraTreesClassifier(n_estimators=250, random_state=1337)
-    else:
-        forest = ensemble.ExtraTreesRegressor(n_estimators=250, random_state=1337)
-
-    forest.fit(X, Y)
-    importances = forest.feature_importances_
-    std = np.std([tree.feature_importances_ for tree in forest.estimators_], axis=0)
-    indices = np.argsort(importances)[::-1]
-
-    print("Feature ranking:")
-
-    if columns is None:
-        for i in range(X.shape[1]):
-            print(f"Feature {indices[i]}\t : {round(importances[indices[i]], 2)}")
-        columns = indices
-    else:
-        for i in range(X.shape[1]):
-            print(f"{columns[indices[i]]}\t : {round(importances[indices[i]], 2)}")
-
-    # Note: Remove later, this should be used in visualize.
-    if plot:
-        plt.figure()
-        plt.title("Feature importances")
-        plt.bar(range(X.shape[1]), importances[indices], color="b", yerr=std[indices], align="center")
-        plt.xticks(range(X.shape[1]), [columns[indices[i]] for i in range(X.shape[1])])
-        plt.xlim([-1, X.shape[1]])
-        fig = plt.gcf()
-        fig.set_size_inches(8, 8)
-        plt.show()
-
-
 def adjust_skewness(df: pd.DataFrame, specific: str = None) -> pd.DataFrame:
     """
     Adjusts the skewness of all columns by finding highly skewed columns
