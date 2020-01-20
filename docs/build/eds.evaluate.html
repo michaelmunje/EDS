@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>eds.evaluate module &mdash; eds 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="eds.metrics module" href="eds.metrics.html" />
+    <link rel="prev" title="eds.ensemble module" href="eds.ensemble.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> eds
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="eds.database.html">eds.database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.ensemble.html">eds.ensemble module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">eds.evaluate module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.metrics.html">eds.metrics module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.preprocessing.html">eds.preprocessing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.visualize.html">eds.visualize module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">eds</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>eds.evaluate module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/eds.evaluate.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-eds.evaluate">
+<span id="eds-evaluate-module"></span><h1>eds.evaluate module<a class="headerlink" href="#module-eds.evaluate" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="eds.evaluate.evaluate_regressor">
+<code class="sig-prename descclassname">eds.evaluate.</code><code class="sig-name descname">evaluate_regressor</code><span class="sig-paren">(</span><em class="sig-param">y_actual: numpy.array</em>, <em class="sig-param">y_pred: numpy.array</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#eds.evaluate.evaluate_regressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates a regression model’s set of predictions.
+Prints out several performance scores.
+Returns dictionary containing performance information.</p>
+<dl class="simple">
+<dt>y_actual<span class="classifier">np.array</span></dt><dd><p>True labels of feature vectors.</p>
+</dd>
+<dt>y_pred<span class="classifier">np.array</span></dt><dd><p>Predicted labels of feature vectors.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>dict</dt><dd><p>Performance information for each main metric.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.evaluate.get_best_regressor">
+<code class="sig-prename descclassname">eds.evaluate.</code><code class="sig-name descname">get_best_regressor</code><span class="sig-paren">(</span><em class="sig-param">x: numpy.array, y: numpy.array, loss=True, folds=5, metric: Callable[[numpy.array, numpy.array], float] = &lt;function mse&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#eds.evaluate.get_best_regressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries a suite of different regressors and returns the best performing one.</p>
+<dl class="simple">
+<dt>x<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+<dt>y<span class="classifier">np.array</span></dt><dd><p>Respective outputs of feature vectors.</p>
+</dd>
+<dt>loss<span class="classifier">bool, optional, by default True</span></dt><dd><p>Whether the metric is a loss function. (Smaller means better)</p>
+</dd>
+<dt>folds<span class="classifier">int, optional, by default 5</span></dt><dd><p>Number of folds for cross-validation</p>
+</dd>
+<dt>metric<span class="classifier">Callable[[np.array, np.array], float], optional, by default metrics.mse</span></dt><dd><p>Custom metric to minimize, by default mean squared error.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>model</dt><dd><p>Sklearn like model that performed best compared to a wide selection of models.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.evaluate.get_cross_val_ci">
+<code class="sig-prename descclassname">eds.evaluate.</code><code class="sig-name descname">get_cross_val_ci</code><span class="sig-paren">(</span><em class="sig-param">model, x: numpy.array, y: numpy.array, loss=True, metric: Callable[[numpy.array, numpy.array], float] = None, folds=5</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#eds.evaluate.get_cross_val_ci" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns performance evaluation of a model based on default or custom metric.
+Constructs a 95% confidence interval for an estimation of performance.</p>
+<dl class="simple">
+<dt>model</dt><dd><p>Model to evaluate cross-validation performance on.</p>
+</dd>
+<dt>x<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+<dt>y<span class="classifier">np.array</span></dt><dd><p>Respective outputs of feature vectors.</p>
+</dd>
+<dt>loss: bool, default True</dt><dd><p>Whether this is a loss function (should be minimized) or opposite.</p>
+</dd>
+<dt>metric<span class="classifier">Callable[[np.array, np.array], float]</span></dt><dd><p>Custom metric to use for evaluating cross-validation performance.</p>
+</dd>
+<dt>folds: int</dt><dd><p>Number of cross-validation folds.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>np.array</dt><dd><p>Dictionary containing performance information.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.evaluate.try_many_regressors">
+<code class="sig-prename descclassname">eds.evaluate.</code><code class="sig-name descname">try_many_regressors</code><span class="sig-paren">(</span><em class="sig-param">x: numpy.array, y: numpy.array, loss=True, folds=5, metric: Callable[[numpy.array, numpy.array], float] = &lt;function mse&gt;</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#eds.evaluate.try_many_regressors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries a set of different regression models and returns
+report on the model’s performances.</p>
+<dl class="simple">
+<dt>x<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+<dt>y<span class="classifier">np.array</span></dt><dd><p>Respective outputs of feature vectors.</p>
+</dd>
+<dt>loss<span class="classifier">bool, optional, by default True</span></dt><dd><p>Whether the metric is a loss function. (Smaller means better)</p>
+</dd>
+<dt>folds<span class="classifier">int, optional, by default 5</span></dt><dd><p>Number of folds for cross-validation</p>
+</dd>
+<dt>metric<span class="classifier">Callable[[np.array, np.array], float], optional, by default metrics.mse</span></dt><dd><p>Custom metric to minimize, by default mean squared error.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>dict</dt><dd><p>Dictionary containing result information including a 
+confidence interval of the model’s score as well as the
+unfitted model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Michael Munje
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

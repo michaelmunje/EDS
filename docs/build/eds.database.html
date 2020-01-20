@@ -1,0 +1,316 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>eds.database module &mdash; eds 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="eds.ensemble module" href="eds.ensemble.html" />
+    <link rel="prev" title="Table Of Contents" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> eds
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">eds.database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.ensemble.html">eds.ensemble module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.evaluate.html">eds.evaluate module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.metrics.html">eds.metrics module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.preprocessing.html">eds.preprocessing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.visualize.html">eds.visualize module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">eds</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>eds.database module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/eds.database.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-eds.database">
+<span id="eds-database-module"></span><h1>eds.database module<a class="headerlink" href="#module-eds.database" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="eds.database.Database">
+<em class="property">class </em><code class="sig-prename descclassname">eds.database.</code><code class="sig-name descname">Database</code><span class="sig-paren">(</span><em class="sig-param">db_loc: str</em><span class="sig-paren">)</span><a class="headerlink" href="#eds.database.Database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="eds.database.Database.execute_command">
+<code class="sig-name descname">execute_command</code><span class="sig-paren">(</span><em class="sig-param">statement: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#eds.database.Database.execute_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes an SQL command for the sqlite database.</p>
+<dl class="simple">
+<dt>statement<span class="classifier">str</span></dt><dd><p>Proper SQL command</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.database.Database.fetch_column_names">
+<code class="sig-name descname">fetch_column_names</code><span class="sig-paren">(</span><em class="sig-param">table: str</em><span class="sig-paren">)</span> &#x2192; [&lt;class 'str'&gt;]<a class="headerlink" href="#eds.database.Database.fetch_column_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches the column names for a particular table in the database.</p>
+<dl class="simple">
+<dt>table<span class="classifier">str</span></dt><dd><p>Table name in the database</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>[str]</dt><dd><p>A list of column names for the table queried.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.database.Database.fetch_column_values">
+<code class="sig-name descname">fetch_column_values</code><span class="sig-paren">(</span><em class="sig-param">table: str</em>, <em class="sig-param">column: str</em><span class="sig-paren">)</span> &#x2192; []<a class="headerlink" href="#eds.database.Database.fetch_column_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches a column’s values for a particular table in the database.</p>
+<dl class="simple">
+<dt>table<span class="classifier">str</span></dt><dd><p>Table name in the database</p>
+</dd>
+<dt>column: str</dt><dd><p>Column name for the table</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>[]</dt><dd><p>A list of values in the particular column.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.database.Database.fetch_table_names">
+<code class="sig-name descname">fetch_table_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; [&lt;class 'str'&gt;]<a class="headerlink" href="#eds.database.Database.fetch_table_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches the table names of the database.</p>
+<dl class="simple">
+<dt>[str]</dt><dd><p>A list of table names of the database.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.database.df_to_database">
+<code class="sig-prename descclassname">eds.database.</code><code class="sig-name descname">df_to_database</code><span class="sig-paren">(</span><em class="sig-param">df_in: pandas.core.frame.DataFrame</em>, <em class="sig-param">db_loc: str</em>, <em class="sig-param">table_name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#eds.database.df_to_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a dataframe to a database.</p>
+<dl class="simple">
+<dt>df<span class="classifier">pd.DataFrame</span></dt><dd><p>Input DataFrame containing data.</p>
+</dd>
+<dt>db_loc<span class="classifier">str</span></dt><dd><p>File location for output database.</p>
+</dd>
+<dt>table_name<span class="classifier">str</span></dt><dd><p>Name of table to store particular DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.database.get_column_insertion_command">
+<code class="sig-prename descclassname">eds.database.</code><code class="sig-name descname">get_column_insertion_command</code><span class="sig-paren">(</span><em class="sig-param">table: str</em>, <em class="sig-param">column: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#eds.database.get_column_insertion_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a column name, generates SQL command to create the column in a particular table.</p>
+<dl class="simple">
+<dt>table<span class="classifier">str</span></dt><dd><p>Table name to create column in.</p>
+</dd>
+<dt>column: str</dt><dd><p>Column name.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>str</dt><dd><p>SQL command for creating the particular column in the table.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.database.get_table_create_command">
+<code class="sig-prename descclassname">eds.database.</code><code class="sig-name descname">get_table_create_command</code><span class="sig-paren">(</span><em class="sig-param">table: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#eds.database.get_table_create_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a table name, generates SQL command to create the table.</p>
+<dl class="simple">
+<dt>table<span class="classifier">str</span></dt><dd><p>Table name.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>str</dt><dd><p>SQL command for creating the particular table.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.database.rename_bad_cols">
+<code class="sig-prename descclassname">eds.database.</code><code class="sig-name descname">rename_bad_cols</code><span class="sig-paren">(</span><em class="sig-param">df: pandas.core.frame.DataFrame, chs: [&lt;class 'str'&gt;] = [&quot;'&quot;, '-', ' ', '(', ')', '/']</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#eds.database.rename_bad_cols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renames the columns with bad names in a dataframe.
+‘Bad names’ as in nonacceptable for a database column name.
+Important Note: ‘Feature1-‘ &amp; ‘Feature1)’ lead to an ambiguity issue.
+This should be handled by mantaining a hashed dictionary of the new columns.</p>
+<dl class="simple">
+<dt>df<span class="classifier">pd.DataFrame</span></dt><dd><p>Input DataFrame to convert bad column names from.</p>
+</dd>
+<dt>chs, optional</dt><dd><p>List of unacceptable characters, by default [‘’’, ‘-‘, ‘ ‘, ‘(‘, ‘)’, ‘/’].</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>pd.DataFrame</dt><dd><p>DataFrame that has no unacceptable column names.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Michael Munje
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

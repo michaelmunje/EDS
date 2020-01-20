@@ -1,0 +1,374 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>eds.preprocessing module &mdash; eds 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="eds.visualize module" href="eds.visualize.html" />
+    <link rel="prev" title="eds.metrics module" href="eds.metrics.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> eds
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="eds.database.html">eds.database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.ensemble.html">eds.ensemble module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.evaluate.html">eds.evaluate module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.metrics.html">eds.metrics module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">eds.preprocessing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.visualize.html">eds.visualize module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">eds</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>eds.preprocessing module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/eds.preprocessing.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-eds.preprocessing">
+<span id="eds-preprocessing-module"></span><h1>eds.preprocessing module<a class="headerlink" href="#module-eds.preprocessing" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="eds.preprocessing.adjust_skewness">
+<code class="sig-prename descclassname">eds.preprocessing.</code><code class="sig-name descname">adjust_skewness</code><span class="sig-paren">(</span><em class="sig-param">df: pandas.core.frame.DataFrame</em>, <em class="sig-param">specific: str = None</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#eds.preprocessing.adjust_skewness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjusts the skewness of all columns by finding highly skewed columns
+and performing a boxcox transformation</p>
+<dl class="simple">
+<dt>df<span class="classifier">pd.DataFrame</span></dt><dd><p>DataFrame to adjust skewed columns in</p>
+</dd>
+<dt>specific<span class="classifier">str, optional</span></dt><dd><p>Specfic feature to skew, by default None</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>pd.DataFrame</dt><dd><p>Returns the pandas DataFrame with corrected columns where skewness was high.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.preprocessing.apply_pca">
+<code class="sig-prename descclassname">eds.preprocessing.</code><code class="sig-name descname">apply_pca</code><span class="sig-paren">(</span><em class="sig-param">x: numpy.array</em>, <em class="sig-param">n_comps: float = 0.975</em><span class="sig-paren">)</span> &#x2192; numpy.array<a class="headerlink" href="#eds.preprocessing.apply_pca" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply PCA to the data according to the distribution of x_train</p>
+<dl class="simple">
+<dt>x<span class="classifier">np.array</span></dt><dd><p>numpy.array to scale via its distribution</p>
+</dd>
+<dt>n_comps<span class="classifier">float, optional</span></dt><dd><p>Either the number of principal components, or the variance to be kept in the components., by default 0.975</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>np.array</dt><dd><p>X set of feature vectors with PCA applied.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.preprocessing.apply_scale">
+<code class="sig-prename descclassname">eds.preprocessing.</code><code class="sig-name descname">apply_scale</code><span class="sig-paren">(</span><em class="sig-param">x: numpy.array</em>, <em class="sig-param">scale_type: str = 'Standard'</em><span class="sig-paren">)</span> &#x2192; numpy.array<a class="headerlink" href="#eds.preprocessing.apply_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scales the data according to the distribution of x_train</p>
+<dl class="simple">
+<dt>x<span class="classifier">np.array</span></dt><dd><p>numpy.array to scale via its distribution</p>
+</dd>
+<dt>scale_type<span class="classifier">str, optional</span></dt><dd><p>Which scaling type to use. Options: ‘Standard’, ‘Robust’, ‘MinMax’. Default = ‘Standard’</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>np.array</dt><dd><p>x properly scaled.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.preprocessing.convert_categorical_to_numbers">
+<code class="sig-prename descclassname">eds.preprocessing.</code><code class="sig-name descname">convert_categorical_to_numbers</code><span class="sig-paren">(</span><em class="sig-param">to_change_df: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#eds.preprocessing.convert_categorical_to_numbers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dummifies all category data including objects.
+Assumes the data has been cleaned and the dtypes are consistent.</p>
+<dl class="simple">
+<dt>to_change_df<span class="classifier">pd.DataFrame</span></dt><dd><p>pandas DataFrame to convert to all numerical</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>pd.DataFrame</dt><dd><p>Dummified input pandas DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.preprocessing.convert_objects_to_categories">
+<code class="sig-prename descclassname">eds.preprocessing.</code><code class="sig-name descname">convert_objects_to_categories</code><span class="sig-paren">(</span><em class="sig-param">to_change_df: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#eds.preprocessing.convert_objects_to_categories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts all object dtypes into categories</p>
+<dl class="simple">
+<dt>to_change_df<span class="classifier">pd.DataFrame</span></dt><dd><p>DataFrame to convert objects to categories</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>pd.DataFrame</dt><dd><p>DataFrame with categories instead of objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.preprocessing.get_moderate_correlations">
+<code class="sig-prename descclassname">eds.preprocessing.</code><code class="sig-name descname">get_moderate_correlations</code><span class="sig-paren">(</span><em class="sig-param">df: pandas.core.frame.DataFrame</em>, <em class="sig-param">col_to_correlate: str</em>, <em class="sig-param">moderate_value: float = 0.4</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#eds.preprocessing.get_moderate_correlations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints out all correlations deemed as moderate (0.4, or set by parameter).</p>
+<dl class="simple">
+<dt>df<span class="classifier">pd.DataFrame</span></dt><dd><p>pandas DataFrame to check correlations from.</p>
+</dd>
+<dt>col_to_correlate<span class="classifier">str</span></dt><dd><p>String that represents column we want to check correlations with.</p>
+</dd>
+<dt>moderate_value<span class="classifier">float, optional</span></dt><dd><p>Which correlation value we deem as moderate (default 0.4)., by default 0.4</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>[dict]</dt><dd><p>List of dictionaries that contain the column name and its correlation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.preprocessing.get_nan_col_proportions">
+<code class="sig-prename descclassname">eds.preprocessing.</code><code class="sig-name descname">get_nan_col_proportions</code><span class="sig-paren">(</span><em class="sig-param">df: pandas.core.frame.DataFrame</em>, <em class="sig-param">lowest_proportion: float = 0.0</em><span class="sig-paren">)</span> &#x2192; [(&lt;class 'str'&gt;, &lt;class 'float'&gt;)]<a class="headerlink" href="#eds.preprocessing.get_nan_col_proportions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints out all columns with NaN values that exceed a specific proportion (default 0.0)</p>
+<dl class="simple">
+<dt>df: pd.DataFrame</dt><dd><p>Input DataFrame to check column NaN rates.</p>
+</dd>
+<dt>lowest_proportion: float</dt><dd><p>Threshold for unacceptable NaN rate.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>[dict]</dt><dd><p>List of dictionaries that contain the string of the column name and its NaN rate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.preprocessing.remove_constant_columns">
+<code class="sig-prename descclassname">eds.preprocessing.</code><code class="sig-name descname">remove_constant_columns</code><span class="sig-paren">(</span><em class="sig-param">df: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#eds.preprocessing.remove_constant_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes redundant constant columns from a dataframe.</p>
+<dl class="simple">
+<dt>df<span class="classifier">pd.DataFrame</span></dt><dd><p>DataFrame to return without constant columns.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>pd.DataFrame</dt><dd><p>Input DataFrame without constant columns.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.preprocessing.remove_nan_cols">
+<code class="sig-prename descclassname">eds.preprocessing.</code><code class="sig-name descname">remove_nan_cols</code><span class="sig-paren">(</span><em class="sig-param">df: pandas.core.frame.DataFrame</em>, <em class="sig-param">prop_threshold: float = 0.0</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#eds.preprocessing.remove_nan_cols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes columns from a DataFrame that have an unacceptable NaN rate.</p>
+<dl class="simple">
+<dt>df<span class="classifier">pd.DataFrame</span></dt><dd><p>DataFrame to check column NaN rates.</p>
+</dd>
+<dt>prop_threshold<span class="classifier">float, optional</span></dt><dd><p>Threshold for unacceptable NaN rate, by default 0.0</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>pd.DataFrame</dt><dd><p>DataFrame that removed the unacceptable NaN columns.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.preprocessing.remove_weak_correlations">
+<code class="sig-prename descclassname">eds.preprocessing.</code><code class="sig-name descname">remove_weak_correlations</code><span class="sig-paren">(</span><em class="sig-param">df: pandas.core.frame.DataFrame</em>, <em class="sig-param">target_col: str</em>, <em class="sig-param">weak_threshold: float = 0.1</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#eds.preprocessing.remove_weak_correlations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes weak correlations from a DataFrame.</p>
+<dl class="simple">
+<dt>df<span class="classifier">pd.DataFrame</span></dt><dd><p>Input DataFrame to which remove weak correlations from.</p>
+</dd>
+<dt>target_col<span class="classifier">str</span></dt><dd><p>Target column to check correlations with.</p>
+</dd>
+<dt>weak_threshold<span class="classifier">float, optional</span></dt><dd><p>Threshold to consider a weak correlation, by default 0.1</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>pd.DataFrame</dt><dd><p>DataFrame without weak correlations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.preprocessing.replace_missing_with_ml">
+<code class="sig-prename descclassname">eds.preprocessing.</code><code class="sig-name descname">replace_missing_with_ml</code><span class="sig-paren">(</span><em class="sig-param">df: pandas.core.frame.DataFrame</em>, <em class="sig-param">col_to_predict: str) -&gt; (&lt;class 'pandas.core.frame.DataFrame'&gt;</em>, <em class="sig-param">&lt;class 'dict'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#eds.preprocessing.replace_missing_with_ml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace the missing values in the given column using machine learning predictions</p>
+<dl class="simple">
+<dt>df<span class="classifier">pd.DataFrame</span></dt><dd><p>DataFrame to use as features (and predictor column)</p>
+</dd>
+<dt>col_to_predict<span class="classifier">str</span></dt><dd><p>string that represents the predictor column</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>(pd.DataFrame, dict)</dt><dd><p>DataFrame with filled predictor column values via machine learning
+Also returns a dictionary containing performance information.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Michael Munje
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

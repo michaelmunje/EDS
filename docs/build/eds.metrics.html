@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>eds.metrics module &mdash; eds 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="eds.preprocessing module" href="eds.preprocessing.html" />
+    <link rel="prev" title="eds.evaluate module" href="eds.evaluate.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> eds
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="eds.database.html">eds.database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.ensemble.html">eds.ensemble module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.evaluate.html">eds.evaluate module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">eds.metrics module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.preprocessing.html">eds.preprocessing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.visualize.html">eds.visualize module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">eds</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>eds.metrics module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/eds.metrics.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-eds.metrics">
+<span id="eds-metrics-module"></span><h1>eds.metrics module<a class="headerlink" href="#module-eds.metrics" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="eds.metrics.avg_error">
+<code class="sig-prename descclassname">eds.metrics.</code><code class="sig-name descname">avg_error</code><span class="sig-paren">(</span><em class="sig-param">Y: numpy.array</em>, <em class="sig-param">Y_hat: numpy.array</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#eds.metrics.avg_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Average of the FPR and FNR.</p>
+<dl class="simple">
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Array of true labels</p>
+</dd>
+<dt>Y_hat<span class="classifier">np.array</span></dt><dd><p>Array of predicted labels</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>float</dt><dd><p>Average of the FPR and FNR.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.metrics.false_negative_rate">
+<code class="sig-prename descclassname">eds.metrics.</code><code class="sig-name descname">false_negative_rate</code><span class="sig-paren">(</span><em class="sig-param">Y: numpy.array</em>, <em class="sig-param">Y_hat: numpy.array</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#eds.metrics.false_negative_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>False negative rate of the predictions.
+Also known as type II error rate.</p>
+<dl class="simple">
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Array of true labels</p>
+</dd>
+<dt>Y_hat<span class="classifier">np.array</span></dt><dd><p>Array of predicted labels</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>float</dt><dd><p>False negative rate</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.metrics.false_positive_rate">
+<code class="sig-prename descclassname">eds.metrics.</code><code class="sig-name descname">false_positive_rate</code><span class="sig-paren">(</span><em class="sig-param">Y: numpy.array</em>, <em class="sig-param">Y_hat: numpy.array</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#eds.metrics.false_positive_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>False positive rate of the predictions.
+Also known as type I error rate.</p>
+<dl class="simple">
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Array of true labels</p>
+</dd>
+<dt>Y_hat<span class="classifier">np.array</span></dt><dd><p>Array of predicted labels</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>float</dt><dd><p>False positive rate</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.metrics.mse">
+<code class="sig-prename descclassname">eds.metrics.</code><code class="sig-name descname">mse</code><span class="sig-paren">(</span><em class="sig-param">Y: numpy.array</em>, <em class="sig-param">Y_hat: numpy.array</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#eds.metrics.mse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mean squared error of the prediction.
+Equivalent to the residual sum of squares normalized by size.</p>
+<dl class="simple">
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Array of true labels</p>
+</dd>
+<dt>Y_hat<span class="classifier">np.array</span></dt><dd><p>Array of predicted labels</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>float</dt><dd><p>Mean squared error of the prediction.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.metrics.r2_error">
+<code class="sig-prename descclassname">eds.metrics.</code><code class="sig-name descname">r2_error</code><span class="sig-paren">(</span><em class="sig-param">Y: numpy.array</em>, <em class="sig-param">Y_hat: numpy.array</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#eds.metrics.r2_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>R2 score error of the prediction.
+See <a class="reference external" href="https://en.wikipedia.org/wiki/Coefficient_of_determination">wiki</a>
+for more info.
+Since it returns error, returns 1 - R2</p>
+<dl class="simple">
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Array of true labels</p>
+</dd>
+<dt>Y_hat<span class="classifier">np.array</span></dt><dd><p>Array of predicted labels</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>float</dt><dd><p>Error rate of the R2 score.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eds.metrics.roc_auc_error">
+<code class="sig-prename descclassname">eds.metrics.</code><code class="sig-name descname">roc_auc_error</code><span class="sig-paren">(</span><em class="sig-param">Y: numpy.array</em>, <em class="sig-param">Y_hat: numpy.array</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#eds.metrics.roc_auc_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the error rate of the ROC AUC.
+In other words, 1 - ROC AUC</p>
+<dl class="simple">
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Array of true labels</p>
+</dd>
+<dt>Y_hat<span class="classifier">np.array</span></dt><dd><p>Array of predicted labels
+Important note: This should be a probability vector
+of probability that X’s label is the positive class.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>float</dt><dd><p>Returns the error rate of the ROC AUC.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Michael Munje
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

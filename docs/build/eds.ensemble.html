@@ -1,0 +1,492 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>eds.ensemble module &mdash; eds 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="eds.evaluate module" href="eds.evaluate.html" />
+    <link rel="prev" title="eds.database module" href="eds.database.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> eds
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="eds.database.html">eds.database module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">eds.ensemble module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.evaluate.html">eds.evaluate module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.metrics.html">eds.metrics module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.preprocessing.html">eds.preprocessing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eds.visualize.html">eds.visualize module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">eds</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>eds.ensemble module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/eds.ensemble.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-eds.ensemble">
+<span id="eds-ensemble-module"></span><h1>eds.ensemble module<a class="headerlink" href="#module-eds.ensemble" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="eds.ensemble.Ensemble">
+<em class="property">class </em><code class="sig-prename descclassname">eds.ensemble.</code><code class="sig-name descname">Ensemble</code><span class="sig-paren">(</span><em class="sig-param">models: [] = None</em>, <em class="sig-param">names: [&lt;class 'str'&gt;] = None</em>, <em class="sig-param">weights: numpy.array = None</em><span class="sig-paren">)</span><a class="headerlink" href="#eds.ensemble.Ensemble" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for an sklearn model-like wrapper for an ensemble of models.</p>
+<dl class="method">
+<dt id="eds.ensemble.Ensemble.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">X: numpy.array</em>, <em class="sig-param">Y: numpy.array</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#eds.ensemble.Ensemble.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits each of the models in the ensemble to the data.
+This is usually the last step and assumes the weights
+have been optimized already.</p>
+<dl class="simple">
+<dt>X<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Set of respective outputs of the feature vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.Ensemble.get_cv_results">
+<code class="sig-name descname">get_cv_results</code><span class="sig-paren">(</span><em class="sig-param">X: numpy.array</em>, <em class="sig-param">Y: numpy.array</em>, <em class="sig-param">num_splits: int = 10) -&gt; (&lt;built-in function array&gt;</em>, <em class="sig-param">&lt;built-in function array&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#eds.ensemble.Ensemble.get_cv_results" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.Ensemble.get_default_models">
+<em class="property">abstract static </em><code class="sig-name descname">get_default_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; []<a class="headerlink" href="#eds.ensemble.Ensemble.get_default_models" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.Ensemble.get_default_models_names">
+<em class="property">abstract static </em><code class="sig-name descname">get_default_models_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; [&lt;class 'str'&gt;]<a class="headerlink" href="#eds.ensemble.Ensemble.get_default_models_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.Ensemble.get_model_importances">
+<code class="sig-name descname">get_model_importances</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eds.ensemble.Ensemble.get_model_importances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of important models.
+Importance calculated using the weights.
+If names were not provided, simply returns the weights.</p>
+<dl class="simple">
+<dt>[]</dt><dd><p>Returns a list of important models.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.Ensemble.optimal_fit_cv">
+<code class="sig-name descname">optimal_fit_cv</code><span class="sig-paren">(</span><em class="sig-param">X: numpy.array</em>, <em class="sig-param">Y: numpy.array</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#eds.ensemble.Ensemble.optimal_fit_cv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimizes the weights of the vector using cross-validation,
+then fits to all of the data.</p>
+<dl class="simple">
+<dt>X<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Set of respective outputs of the feature vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.Ensemble.optimize_weights_cv">
+<code class="sig-name descname">optimize_weights_cv</code><span class="sig-paren">(</span><em class="sig-param">X: numpy.array</em>, <em class="sig-param">Y: numpy.array</em>, <em class="sig-param">iterations: int = 1000</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#eds.ensemble.Ensemble.optimize_weights_cv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimizes the weights of the ensemble by using cross-validation.</p>
+<dl class="simple">
+<dt>X<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Set of respective outputs of the feature vectors.</p>
+</dd>
+<dt>iterations<span class="classifier">int, optional</span></dt><dd><p>Number of optimization steps, by default 1000</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.Ensemble.predict">
+<em class="property">abstract </em><code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">x: numpy.array</em><span class="sig-paren">)</span> &#x2192; numpy.array<a class="headerlink" href="#eds.ensemble.Ensemble.predict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="eds.ensemble.EnsembleClassifier">
+<em class="property">class </em><code class="sig-prename descclassname">eds.ensemble.</code><code class="sig-name descname">EnsembleClassifier</code><span class="sig-paren">(</span><em class="sig-param">models=None, names: [&lt;class 'str'&gt;] = None, weights: numpy.array = None, metric: Callable[[numpy.array, numpy.array], float] = &lt;function roc_auc_error&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#eds.ensemble.EnsembleClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#eds.ensemble.Ensemble" title="eds.ensemble.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">eds.ensemble.Ensemble</span></code></a></p>
+<dl class="method">
+<dt id="eds.ensemble.EnsembleClassifier.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">X: numpy.array</em>, <em class="sig-param">Y: numpy.array</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#eds.ensemble.EnsembleClassifier.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits each of the models in the ensemble to the data.
+This is usually the last step and assumes the weights
+have been optimized already.</p>
+<dl class="simple">
+<dt>X<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Set of respective outputs of the feature vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleClassifier.get_cv_results">
+<code class="sig-name descname">get_cv_results</code><span class="sig-paren">(</span><em class="sig-param">X: numpy.array</em>, <em class="sig-param">Y: numpy.array</em>, <em class="sig-param">num_splits: int = 10) -&gt; (&lt;built-in function array&gt;</em>, <em class="sig-param">&lt;built-in function array&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#eds.ensemble.EnsembleClassifier.get_cv_results" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleClassifier.get_default_models">
+<em class="property">static </em><code class="sig-name descname">get_default_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; []<a class="headerlink" href="#eds.ensemble.EnsembleClassifier.get_default_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an array consisting of predefined classifiers.
+The specific classifiers can be found in <span class="xref std std-ref">User Guide</span></p>
+<dl class="simple">
+<dt>[]</dt><dd><p>An array consisting of predefined classifiers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleClassifier.get_default_models_names">
+<em class="property">static </em><code class="sig-name descname">get_default_models_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; [&lt;class 'str'&gt;]<a class="headerlink" href="#eds.ensemble.EnsembleClassifier.get_default_models_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an array consisting of predefined classifiers’ names.
+The specific classifiers can be found in <span class="xref std std-ref">User Guide</span></p>
+<dl class="simple">
+<dt>[]</dt><dd><p>An array consisting of string names of predefined classifiers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleClassifier.get_model_importances">
+<code class="sig-name descname">get_model_importances</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eds.ensemble.EnsembleClassifier.get_model_importances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of important models.
+Importance calculated using the weights.
+If names were not provided, simply returns the weights.</p>
+<dl class="simple">
+<dt>[]</dt><dd><p>Returns a list of important models.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleClassifier.optimal_fit_cv">
+<code class="sig-name descname">optimal_fit_cv</code><span class="sig-paren">(</span><em class="sig-param">X: numpy.array</em>, <em class="sig-param">Y: numpy.array</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#eds.ensemble.EnsembleClassifier.optimal_fit_cv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimizes the weights of the vector using cross-validation,
+then fits to all of the data.</p>
+<dl class="simple">
+<dt>X<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Set of respective outputs of the feature vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleClassifier.optimize_weights_cv">
+<code class="sig-name descname">optimize_weights_cv</code><span class="sig-paren">(</span><em class="sig-param">X: numpy.array</em>, <em class="sig-param">Y: numpy.array</em>, <em class="sig-param">iterations: int = 1000</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#eds.ensemble.EnsembleClassifier.optimize_weights_cv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimizes the weights of the ensemble by using cross-validation.</p>
+<dl class="simple">
+<dt>X<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Set of respective outputs of the feature vectors.</p>
+</dd>
+<dt>iterations<span class="classifier">int, optional</span></dt><dd><p>Number of optimization steps, by default 1000</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleClassifier.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">x: numpy.array</em><span class="sig-paren">)</span> &#x2192; numpy.array<a class="headerlink" href="#eds.ensemble.EnsembleClassifier.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts classes of feature vectors with the ensemble.
+Note: Binary output is only supported at this time.</p>
+<dl class="simple">
+<dt>x<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors to predict classes for.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>np.array</dt><dd><p>Ensemble’s prediction of binary classes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleClassifier.predict_proba">
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param">x: numpy.array</em><span class="sig-paren">)</span> &#x2192; numpy.array<a class="headerlink" href="#eds.ensemble.EnsembleClassifier.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts the class probability vector for the feature vectors with the ensemble.</p>
+<dl class="simple">
+<dt>x<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>np.array</dt><dd><p>Prediction for the classes probabilities for each feature vector.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="eds.ensemble.EnsembleRegressor">
+<em class="property">class </em><code class="sig-prename descclassname">eds.ensemble.</code><code class="sig-name descname">EnsembleRegressor</code><span class="sig-paren">(</span><em class="sig-param">models=None, names: [&lt;class 'str'&gt;] = None, weights: numpy.array = None, metric: Callable[[numpy.array, numpy.array], float] = &lt;function mse&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#eds.ensemble.EnsembleRegressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#eds.ensemble.Ensemble" title="eds.ensemble.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">eds.ensemble.Ensemble</span></code></a></p>
+<dl class="method">
+<dt id="eds.ensemble.EnsembleRegressor.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">X: numpy.array</em>, <em class="sig-param">Y: numpy.array</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#eds.ensemble.EnsembleRegressor.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits each of the models in the ensemble to the data.
+This is usually the last step and assumes the weights
+have been optimized already.</p>
+<dl class="simple">
+<dt>X<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Set of respective outputs of the feature vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleRegressor.get_cv_results">
+<code class="sig-name descname">get_cv_results</code><span class="sig-paren">(</span><em class="sig-param">X: numpy.array</em>, <em class="sig-param">Y: numpy.array</em>, <em class="sig-param">num_splits: int = 10) -&gt; (&lt;built-in function array&gt;</em>, <em class="sig-param">&lt;built-in function array&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#eds.ensemble.EnsembleRegressor.get_cv_results" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleRegressor.get_default_models">
+<em class="property">static </em><code class="sig-name descname">get_default_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; []<a class="headerlink" href="#eds.ensemble.EnsembleRegressor.get_default_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an array consisting of predefined regressors.
+The specific regressors can be found in <span class="xref std std-ref">User Guide</span></p>
+<dl class="simple">
+<dt>[]</dt><dd><p>An array consisting of predefined regressors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleRegressor.get_default_models_names">
+<em class="property">static </em><code class="sig-name descname">get_default_models_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; [&lt;class 'str'&gt;]<a class="headerlink" href="#eds.ensemble.EnsembleRegressor.get_default_models_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an array consisting of predefined regressors’ names.
+The specific regressors can be found in <span class="xref std std-ref">User Guide</span></p>
+<dl class="simple">
+<dt>[]</dt><dd><p>An array consisting of string names of predefined regressors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleRegressor.get_model_importances">
+<code class="sig-name descname">get_model_importances</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eds.ensemble.EnsembleRegressor.get_model_importances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of important models.
+Importance calculated using the weights.
+If names were not provided, simply returns the weights.</p>
+<dl class="simple">
+<dt>[]</dt><dd><p>Returns a list of important models.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleRegressor.optimal_fit_cv">
+<code class="sig-name descname">optimal_fit_cv</code><span class="sig-paren">(</span><em class="sig-param">X: numpy.array</em>, <em class="sig-param">Y: numpy.array</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#eds.ensemble.EnsembleRegressor.optimal_fit_cv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimizes the weights of the vector using cross-validation,
+then fits to all of the data.</p>
+<dl class="simple">
+<dt>X<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Set of respective outputs of the feature vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleRegressor.optimize_weights_cv">
+<code class="sig-name descname">optimize_weights_cv</code><span class="sig-paren">(</span><em class="sig-param">X: numpy.array</em>, <em class="sig-param">Y: numpy.array</em>, <em class="sig-param">iterations: int = 1000</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#eds.ensemble.EnsembleRegressor.optimize_weights_cv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimizes the weights of the ensemble by using cross-validation.</p>
+<dl class="simple">
+<dt>X<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors.</p>
+</dd>
+<dt>Y<span class="classifier">np.array</span></dt><dd><p>Set of respective outputs of the feature vectors.</p>
+</dd>
+<dt>iterations<span class="classifier">int, optional</span></dt><dd><p>Number of optimization steps, by default 1000</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="eds.ensemble.EnsembleRegressor.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">x: numpy.array</em><span class="sig-paren">)</span> &#x2192; numpy.array<a class="headerlink" href="#eds.ensemble.EnsembleRegressor.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts output scalar of feature vectors with the ensemble.</p>
+<dl class="simple">
+<dt>x<span class="classifier">np.array</span></dt><dd><p>Set of feature vectors to predict output scalar for.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>np.array</dt><dd><p>Ensemble’s regression prediction for each feature vector.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Michael Munje
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
