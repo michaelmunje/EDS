@@ -1,4 +1,5 @@
 from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import KFold
 from scipy.optimize import differential_evolution
 from eds import metrics
 from eds import _default_models
@@ -14,7 +15,7 @@ class Ensemble(ABC):
     """
     @abstractmethod
     def __init__(self, models: [] = None, names: [str] = None, weights: np.array = None):
-        self.models = models if models else Ensemble.get_default_models()
+        self.models = models if models else self.get_default_models()
         self.weights = weights if weights else [1/len(self.models)] * len(self.models)
         self.names = names if models else Ensemble.get_default_models_names()
 
@@ -92,7 +93,10 @@ class Ensemble(ABC):
         iterations : int, optional
             Number of optimization steps, by default 1000
         """
+        print('Getting cross-validation results...')
         model_preds, y_holdout_true = self.__get_cv_holdout_results(X, Y)
+
+        print('Optimizing weights using results...')
 
         bounds = [(0.0, 1.0)] * len(self.models)
         result = differential_evolution(self.__evaluate_ensemble_weights, bounds,
@@ -117,6 +121,10 @@ class Ensemble(ABC):
             return sorted(tuples, key=lambda x: x[1], reverse=True)
         return self.weights
 
+    def get_cv_results(self, X: np.array, Y: np.array, num_splits: int = 10) -> (np.array, np.array):
+        model_preds, y_holdout_true = self.__get_cv_holdout_results(X, Y)
+        return self.__evaluate_ensemble_weights(self.weights, model_preds, y_holdout_true)
+
     def __evaluate_ensemble_weights(self, weights: np.array, model_preds: np.array, y_test: np.array) -> float:
         """
         Private method used by optimization process to get performance of the current weight vector.
@@ -128,7 +136,7 @@ class Ensemble(ABC):
 
         model_preds : np.array
             Array of model's predictions for X
-            
+
         y_test : np.array
             True outputs of X
 
@@ -162,7 +170,10 @@ class Ensemble(ABC):
         (np.array, np.array)
             Returns the set of holdout predictions of each model, and the true outputs
         """
-        cv = StratifiedKFold(n_splits=num_splits, shuffle=True, random_state=1337)
+        if len(np.unique(Y)) <= 2:
+            cv = StratifiedKFold(n_splits=num_splits, shuffle=True, random_state=1337)
+        else:
+            cv = KFold(n_splits=num_splits, shuffle=True, random_state=1337)
         results = [[] for _ in range(len(self.models))]
         Y_holdout_true = []
         for train, test in cv.split(X, Y):
@@ -175,7 +186,7 @@ class Ensemble(ABC):
 
 class EnsembleClassifier(Ensemble):
 
-    def __init__(self, models, names: [str] = None, weights: np.array = None,
+    def __init__(self, models=None, names: [str] = None, weights: np.array = None,
                  metric: Callable[[np.array, np.array], float] = metrics.roc_auc_error):
         """
         Class for ensemble of classifiers which is an sklearn-like model but for an ensemble of classifiers.
@@ -282,7 +293,7 @@ class EnsembleClassifier(Ensemble):
 
 class EnsembleRegressor(Ensemble):
 
-    def __init__(self, models, names: [str] = None, weights: np.array = None,
+    def __init__(self, models=None, names: [str] = None, weights: np.array = None,
                  metric: Callable[[np.array, np.array], float] = metrics.mse):
         """
         Class for ensemble of regressors which is an sklearn-like model but for an ensemble of regressors.

@@ -3,7 +3,7 @@ from scipy.special import boxcox1p
 from sklearn import ensemble
 from sklearn import preprocessing
 from sklearn import decomposition
-import eds.metrics
+from eds import metrics
 from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
@@ -94,7 +94,7 @@ def remove_nan_cols(df: pd.DataFrame, prop_threshold: float = 0.0) -> pd.DataFra
     """
 
     nan_props = get_nan_col_proportions(df, prop_threshold)
-    names = [name for name, _ in nan_props]
+    names = [n['Column_Name'] for n in nan_props]
     df.drop(columns=names, inplace=True)
     return df
 
@@ -153,15 +153,12 @@ def remove_weak_correlations(df: pd.DataFrame, target_col: str, weak_threshold: 
         DataFrame without weak correlations.
     """
 
-    col_to_correlate = 'PREDICTOR_TO_CHECK_WEAK_CORRS'
-    df[col_to_correlate] = target_col
-    cols = df[df.columns].corr().columns
-    corrs = df[df.columns].corr()[col_to_correlate]
+    cols = df.corr().columns
+    corrs = df.corr()[target_col]
     strongly_correlated = list()
     for col, corr in zip(cols, corrs):
-        if abs(corr) >= weak_threshold and col != col_to_correlate:
+        if abs(corr) >= weak_threshold:
             strongly_correlated.append(col)
-    df = df.drop(columns=[col_to_correlate])
     for col in df.columns:
         if col not in strongly_correlated:
             df.drop(columns=[col], inplace=True)
@@ -271,15 +268,10 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> (pd.DataFr
     is_classify = True
 
     if df[col_to_predict].dtype.name == 'object':
-        rf = ensemble.GradientBoostingClassifier(n_estimators=3000, learning_rate=0.05,
-                                                 max_depth=4, max_features='sqrt',
-                                                 min_samples_leaf=15, min_samples_split=10)
+        rf = ensemble.GradientBoostingClassifier()
     else:
         is_classify = False
-        rf = ensemble.GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
-                                                max_depth=4, max_features='sqrt',
-                                                min_samples_leaf=15, min_samples_split=10,
-                                                loss='huber')
+        rf = ensemble.GradientBoostingRegressor()
 
     rf.fit(x_train, y_train)
 

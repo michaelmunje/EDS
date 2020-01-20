@@ -65,7 +65,6 @@ def avg_error(Y: np.array, Y_hat: np.array) -> float:
     float
         Average of the FPR and FNR.
     """
-    Y_hat = np.array([1 if pred >= 0.5 else 0 for pred in Y_hat])
     return (false_positive_rate(Y, Y_hat) + false_negative_rate(Y, Y_hat)) / 2
 
 

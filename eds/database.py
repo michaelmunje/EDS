@@ -58,7 +58,7 @@ class Database:
         self.execute_command('PRAGMA table_info(' + table + ');')
         return [x[1] for x in self.cursor.fetchall()]
 
-    def fetch_col_values(self, table: str, column: str) -> []:
+    def fetch_column_values(self, table: str, column: str) -> []:
         """
         Fetches a column's values for a particular table in the database.
 
@@ -104,7 +104,7 @@ def rename_bad_cols(df: pd.DataFrame, chs: [str] = ['\'', '-', ' ', '(', ')', '/
     return df.columns
 
 
-def df_to_database(df: pd.DataFrame, db_loc: str, table_name: str) -> None:
+def df_to_database(df_in: pd.DataFrame, db_loc: str, table_name: str) -> None:
     """
     Converts a dataframe to a database.
 
@@ -119,8 +119,10 @@ def df_to_database(df: pd.DataFrame, db_loc: str, table_name: str) -> None:
     table_name : str
         Name of table to store particular DataFrame.
     """
+    df = df_in.copy()
     df.columns = rename_bad_cols(df)
     database = Database(db_loc)
+    database.execute_command(get_table_create_command(table_name))
     for column in df.columns:
         database.execute_command(get_column_insertion_command(table_name, column))
     df.to_sql(table_name, database.connection, if_exists='append', index=False)

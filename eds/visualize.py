@@ -7,7 +7,7 @@ from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.model_selection import StratifiedKFold
 
 
-def plot_feature_importances(X, y, classify=True):
+def plot_feature_importances(X, y, col_names, classify=True):
 
     cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=1337)
 
@@ -24,8 +24,7 @@ def plot_feature_importances(X, y, classify=True):
 
     importances = np.mean(importance_trees, axis=0)
     std = np.std(importance_trees, axis=0)
-    importances, columns, std = zip(*(sorted(zip(importances, df.columns[:-1], std), key=lambda x: x[0])[::-1]))
-
+    importances, columns, std = zip(*(sorted(zip(importances, col_names[:-1], std), key=lambda x: x[0])[::-1]))
     plt.figure()
     plt.title("Feature importances", fontsize=20)
     plt.bar(range(X.shape[1]), importances, color="b", yerr=std, align="center")
