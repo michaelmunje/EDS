@@ -1,11 +1,10 @@
 from scipy.stats import skew
 from scipy.special import boxcox1p
 from sklearn import ensemble
-from sklearn import metrics
 from sklearn import preprocessing
 from sklearn import decomposition
+import eds.metrics
 from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
@@ -60,8 +59,8 @@ def get_nan_col_proportions(df: pd.DataFrame, lowest_proportion: float = 0.0) ->
 
     Returns
     -------
-    [(str, float)]
-        List of tuples that contain the string of the column name and its NaN rate.
+    [dict]
+        List of dictionaries that contain the string of the column name and its NaN rate.
     """
 
     values = list(zip(list(df.isnull().columns), list(df.isnull().any())))
@@ -72,7 +71,7 @@ def get_nan_col_proportions(df: pd.DataFrame, lowest_proportion: float = 0.0) ->
     nan_prop_list = list()
     for col, propo_nan in proportion_nan:
         if abs(propo_nan) > lowest_proportion:
-            nan_prop_list.append((col, propo_nan))
+            nan_prop_list.append({'Column_Name': col, 'NaN_Proportion': propo_nan})
     return nan_prop_list
 
 
@@ -100,7 +99,7 @@ def remove_nan_cols(df: pd.DataFrame, prop_threshold: float = 0.0) -> pd.DataFra
     return df
 
 
-def print_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderate_value: float = 0.4) -> None:
+def get_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderate_value: float = 0.4) -> None:
     """
     Prints out all correlations deemed as moderate (0.4, or set by parameter).
 
@@ -115,8 +114,13 @@ def print_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderat
     moderate_value : float, optional
         Which correlation value we deem as moderate (default 0.4)., by default 0.4
 
+    Returns
+    -------
+    [dict]
+        List of dictionaries that contain the column name and its correlation.
     """
 
+    result = []
     if df[col_to_correlate].dtype.name == 'category':
         df[col_to_correlate] = df[col_to_correlate].cat.codes
     corrs = df[df.columns].corr()
@@ -124,12 +128,13 @@ def print_moderate_correlations(df: pd.DataFrame, col_to_correlate: str, moderat
     corrs_value = corrs[col_to_correlate]
     for col, corr_value in zip(cols, corrs_value):
         if abs(corr_value) > moderate_value and col != col_to_correlate:
-            print(col, ' : ', round(corr_value, 2))
+            result.append({'Column_Name': col, 'Correlation:': round(corr_value, 2))
+    return result
 
 
 def remove_weak_correlations(df: pd.DataFrame, target_col: str, weak_threshold: float = 0.1) -> pd.DataFrame:
     """
-    [summary]
+    Removes weak correlations from a DataFrame.
 
     Parameters
     ----------
@@ -221,7 +226,7 @@ def convert_objects_to_categories(to_change_df: pd.DataFrame) -> pd.DataFrame:
     return to_change_df
 
 
-def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> None:
+def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> (pd.DataFrame, dict):
     """
     Replace the missing values in the given column using machine learning predictions
 
@@ -235,8 +240,9 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> None:
 
     Returns
     -------
-    pd.DataFrame
+    (pd.DataFrame, dict)
         DataFrame with filled predictor column values via machine learning
+        Also returns a dictionary containing performance information.
 
     """
 
@@ -277,20 +283,27 @@ def replace_missing_with_ml(df: pd.DataFrame, col_to_predict: str) -> None:
 
     rf.fit(x_train, y_train)
 
-    print("Successfully trained feature engineering model to predict: " + col_to_predict)
-    print("------Evaluation-------")
+    results = {}
 
     if is_classify:
-        acc = metrics.accuracy_score(y_test, rf.predict(x_test))
-        print('ACC         : ', round(acc, 4))
+        y_hat = rf.predict(x_test)
+        roc_auc = 1 - metrics.roc_auc_error(y_test, rf.predict_proba(x_test))
+        fp_rate = metrics.fp_rate(y_test, y_hat)
+        fn_rate = metrics.fn_rate(y_test, y_hat)
+        results['ROC AUC'] = roc_auc
+        results['False Positive Rate'] = fp_rate
+        results['False Negative Rate'] = fn_rate
     else:
         r2 = metrics.r2_score(y_test, rf.predict(x_test))
         mse = metrics.mean_squared_error(y_test, rf.predict(x_test))
         rmse = mse ** (1 / 2)
-        print('R2          : ', round(r2, 4))
-        print('RMSE        : ', round(rmse, 2))
+        results['R2'] = r2
+        results['Mean Squared Error'] = mse
+        results['Root Mean Squared Error'] = rmse
 
     df.loc[df[col_to_predict].isnull(), col_to_predict] = rf.predict(df_to_predict.values)
+
+    return df, results
 
 
 def apply_scale(x: np.array, scale_type: str = 'Standard') -> np.array:
