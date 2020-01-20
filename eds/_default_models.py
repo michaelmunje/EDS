@@ -26,14 +26,13 @@ def get_default_classfiers():
     return [
         KNeighborsClassifier(3),
         KNeighborsClassifier(7),
-        LogisticRegression(solver='lbfgs', tol=1e-2, max_iter=200, random_state=1337),
+        make_pipeline(preprocessing.StandardScaler(), LogisticRegression(solver='lbfgs', tol=1e-2, max_iter=200, random_state=1337)),
         RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
         RandomForestClassifier(n_estimators=100, min_samples_leaf=3, random_state=1337),
         GradientBoostingClassifier(n_estimators=100, learning_rate=0.25, max_depth=6,
                                    max_features='sqrt', subsample=0.8, random_state=1337),
         AdaBoostClassifier(random_state=1337),
         GaussianNB(),
-        svm.SVC(kernel='poly', gamma='auto'),
     ]
 
 
@@ -56,7 +55,6 @@ def get_default_classifiers_names():
         'Gradient Boosting',
         'Ada Boosting',
         'Naive Bayes',
-        'Support Vector Machine'
     ]
 
 
