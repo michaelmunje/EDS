@@ -157,6 +157,6 @@ def get_best_regressor(x: np.array, y: np.array, loss=True, folds=5,
     model
         Sklearn like model that performed best compared to a wide selection of models.
     """
-    results = try_many_regressors(x, y, loss, metric)
+    results = try_many_regressors(x, y, loss, folds, metric)
     scores = [res['mean_score'] for res in results]
     return results[np.argmin(scores)]['model']
