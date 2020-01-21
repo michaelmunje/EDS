@@ -162,8 +162,15 @@
 <dt>Y_hat<span class="classifier">np.array</span></dt><dd><p>Array of predicted labels</p>
 </dd>
 </dl>
-<dl class="simple">
+<dl>
 <dt>float</dt><dd><p>Average of the FPR and FNR.</p>
+</dd>
+<dt>Returns the average of the FPR and the FNR.</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">avg_error</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_true</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
+<span class="go">0.25</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd></dl>
@@ -179,8 +186,15 @@ Also known as type II error rate.</p>
 <dt>Y_hat<span class="classifier">np.array</span></dt><dd><p>Array of predicted labels</p>
 </dd>
 </dl>
-<dl class="simple">
+<dl>
 <dt>float</dt><dd><p>False negative rate</p>
+</dd>
+<dt>Calculates the false negative rate of a set of predictions.</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">false_negative_rate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_true</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
+<span class="go">0.75</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd></dl>
@@ -200,6 +214,13 @@ Also known as type I error rate.</p>
 <dt>float</dt><dd><p>False positive rate</p>
 </dd>
 </dl>
+<p>Calculates the false positive rate of a set of predictions:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">false_positive_rate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_true</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
+<span class="go">0.5</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -213,8 +234,15 @@ Equivalent to the residual sum of squares normalized by size.</p>
 <dt>Y_hat<span class="classifier">np.array</span></dt><dd><p>Array of predicted labels</p>
 </dd>
 </dl>
-<dl class="simple">
+<dl>
 <dt>float</dt><dd><p>Mean squared error of the prediction.</p>
+</dd>
+<dt>The mean squared error is the average squared distance from predictions and true labels.</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">15</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_true</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
+<span class="go">25.0</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd></dl>
@@ -232,8 +260,15 @@ Since it returns error, returns 1 - R2</p>
 <dt>Y_hat<span class="classifier">np.array</span></dt><dd><p>Array of predicted labels</p>
 </dd>
 </dl>
-<dl class="simple">
+<dl>
 <dt>float</dt><dd><p>Error rate of the R2 score.</p>
+</dd>
+<dt>Returns the error of the R2 (1 - R2)</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">r2_error</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_true</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">0.05</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd></dl>
@@ -251,8 +286,15 @@ Important note: This should be a probability vector
 of probability that X’s label is the positive class.</p>
 </dd>
 </dl>
-<dl class="simple">
+<dl>
 <dt>float</dt><dd><p>Returns the error rate of the ROC AUC.</p>
+</dd>
+<dt>Returns the ROC AUC Error, (1 - AUC).</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">roc_auc_error</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_true</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
+<span class="go">0.25</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd></dl>

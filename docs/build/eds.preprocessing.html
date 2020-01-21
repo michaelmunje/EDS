@@ -183,12 +183,19 @@ and performing a boxcox transformation</p>
 <dt>np.array</dt><dd><p>X set of feature vectors with PCA applied.</p>
 </dd>
 </dl>
+<p>Performs PCA on X feature matrix
+&gt;&gt;&gt; apply_pca([[100, 200], [100, 100], [100, 0]])
+array([[ 100.],</p>
+<blockquote>
+<div><p>[   0.],
+[-100.]])</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="function">
 <dt id="eds.preprocessing.apply_scale">
 <code class="sig-prename descclassname">eds.preprocessing.</code><code class="sig-name descname">apply_scale</code><span class="sig-paren">(</span><em class="sig-param">x: numpy.array</em>, <em class="sig-param">scale_type: str = 'Standard'</em><span class="sig-paren">)</span> &#x2192; numpy.array<a class="headerlink" href="#eds.preprocessing.apply_scale" title="Permalink to this definition">¶</a></dt>
-<dd><p>Scales the data according to the distribution of x_train</p>
+<dd><p>Scales the data according to the distribution of x</p>
 <dl class="simple">
 <dt>x<span class="classifier">np.array</span></dt><dd><p>numpy.array to scale via its distribution</p>
 </dd>
@@ -199,6 +206,27 @@ and performing a boxcox transformation</p>
 <dt>np.array</dt><dd><p>x properly scaled.</p>
 </dd>
 </dl>
+<p>By default, the scale will standardize the feature vectors.
+&gt;&gt;&gt; apply_scale([[-100, 10], [-90, 15], [-10, 20]])
+array([[-0.82760589, -1.22474487],</p>
+<blockquote>
+<div><p>[-0.57932412,  0.        ],
+[ 1.40693001,  1.22474487]])</p>
+</div></blockquote>
+<p>There is also a robust scaling option.
+&gt;&gt;&gt; apply_scale([[100, 10], [0, 15], [5, 20]], scale_type=’Robust’)
+array([[ 1.9, -1. ],</p>
+<blockquote>
+<div><p>[-0.1,  0. ],
+[ 0. ,  1. ]])</p>
+</div></blockquote>
+<p>You can also apply a MinMax scales which scales to 0 to 1.
+&gt;&gt;&gt; apply_scale([[-100, 10], [-90, 15], [-10, 20]], scale_type=’MinMax’)
+array([[0.        , 0.        ],</p>
+<blockquote>
+<div><p>[0.11111111, 0.5       ],
+[1.        , 1.        ]])</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="function">

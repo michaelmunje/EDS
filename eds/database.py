@@ -118,6 +118,12 @@ def df_to_database(df_in: pd.DataFrame, db_loc: str, table_name: str) -> None:
 
     table_name : str
         Name of table to store particular DataFrame.
+
+        >>> from sklearn.datasets import load_boston
+        >>> import pandas as pd
+        >>> boston = load_boston()
+        >>> df = pd.DataFrame(boston.data, columns=boston.feature_names)
+        >>> df_to_database(df, 'tmp_database.db', 'boston')
     """
     df = df_in.copy()
     df.columns = rename_bad_cols(df)
@@ -141,6 +147,10 @@ def get_table_create_command(table: str) -> str:
     -------
     str
         SQL command for creating the particular table.
+
+    Example of generated query from a table string:
+        >>> get_table_create_command('example_table')
+        'CREATE TABLE IF NOT EXISTS example_table (rowid INTEGER PRIMARY KEY);'
     """
     return ('CREATE TABLE IF NOT EXISTS ' + table + ' (rowid INTEGER PRIMARY KEY);')
 
@@ -161,5 +171,9 @@ def get_column_insertion_command(table: str, column: str) -> str:
     -------
     str
         SQL command for creating the particular column in the table.
+
+    Example of generated query from a table string:
+        >>> get_column_insertion_command('example_table', 'new_column')
+        'ALTER TABLE example_table ADD new_column VARCHAR;'
     """
     return ('ALTER TABLE ' + table + ' ADD ' + column + ' VARCHAR;')
