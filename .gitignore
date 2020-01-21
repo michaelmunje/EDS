@@ -8,3 +8,7 @@ examples/.ipynb_checkpoints/
 eds/__pycache__/
 
 tests/__pycache__/
+
+.coverage
+
+docs/source/__pycache__/
