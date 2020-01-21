@@ -118,12 +118,6 @@ def df_to_database(df_in: pd.DataFrame, db_loc: str, table_name: str) -> None:
 
     table_name : str
         Name of table to store particular DataFrame.
-
-        >>> from sklearn.datasets import load_boston
-        >>> import pandas as pd
-        >>> boston = load_boston()
-        >>> df = pd.DataFrame(boston.data, columns=boston.feature_names)
-        >>> df_to_database(df, 'tmp_database.db', 'boston')
     """
     df = df_in.copy()
     df.columns = rename_bad_cols(df)
